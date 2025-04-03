@@ -1,0 +1,22 @@
+body { 
+  margin: 0; 
+  padding: 0;
+  overflow: hidden; 
+  background-color: antiquewhite;
+}
+.space {
+  position: relative;
+  /* overflow: hidden;  */
+  width: 700px;
+  height: 600px;
+  background-color: aquamarine;
+  margin: 0 auto;
+}
+#walkImg {
+  width: 72px;
+  height: 72px;
+  position: absolute; /* 절대 위치 지정 */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* 가운데 정렬 */
+}
