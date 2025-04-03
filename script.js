@@ -36,8 +36,6 @@ document.addEventListener('keydown', function(event) {
   }
 
   // 화면 경계 검사 (선택 사항)
-  // const maxX = window.innerWidth - character.offsetWidth;
-  // const maxY = window.innerHeight - character.offsetHeight;
   const maxX = container.clientWidth - character.offsetWidth;
   const maxY = container.clientHeight - character.offsetHeight;
 
