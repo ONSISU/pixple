@@ -1,0 +1,125 @@
+.old-text {
+  font-size: 15px;
+  font-weight: bold;
+  background: url('../img/user/oldbackground.jpg') no-repeat center;
+  background-size: cover;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.pixel-font {
+  font-family: "Press Start 2P", system-ui;
+  font-style: normal;
+}
+.content {
+  background: url('../img/user/pixelform-clean.png') no-repeat center;
+  background-size: contain;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+.join-form {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.input-background {
+  width: 120px;
+  background: url('../img/user/input-background.png') no-repeat center;
+  border: none;
+  border-radius: 10px;
+  padding: 5px;
+}
+.input-background:focus {
+  border: none;
+  outline: none;
+}
+
+.form-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.playbutton {
+  background: url('../img/user/playbutton-clear.png') no-repeat center;
+  background-size: cover;
+  width: 100%;
+  height: 73px;
+  transition: transform 0.2s ease;
+}
+
+.playbutton:hover {
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+.particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: gold;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: pop 600ms ease-out forwards;
+}
+
+@keyframes pop {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% {
+    transform: translate(var(--x), var(--y)) scale(0.5);
+    opacity: 0;
+  }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.content {
+  width: 640px;
+  height: 540px;
+  position: relative;
+  z-index: 1; /* ABOVE the background */
+}
+
+.content-wrapper {
+  position: relative;
+  width: 640px;
+  height: 540px;
+  background: url('../img/user/background-loop8.gif') no-repeat center;
+}
+
+.content-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+}
+.joinbtn, .submitbtn {
+  border:none;
+  background: none;
+  background: url('../img/user/joinbtn.png') no-repeat center;
+  background-size: cover;
+  padding: 10px 15px;
+  transition: transform 0.2s ease;
+}
+.joinbtn:hover, .submitbtn:hover {
+  transform: scale(1.2);
+}
+
+.btns {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
