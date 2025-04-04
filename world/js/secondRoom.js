@@ -1,6 +1,10 @@
-walkImg.style.position = 'absolute';
-walkImg.style.top = '50px';
-walkImg.style.left = '50px';
+const urlParams = new URLSearchParams(window.location.search);
+const value = urlParams.get('data');
+if(value == 2){
+    walkImg.style.position = 'absolute';
+    walkImg.style.top = '50px';
+    walkImg.style.left = '50px';
+}
 function update() {
     const rect = space.getBoundingClientRect();
     let top = walkImg.offsetTop;
@@ -15,6 +19,10 @@ function update() {
     };
     // 벽들에 대한 충돌 검사
     let canMove = true;
+    // console.log('top-----' + imgRect.top);
+    // console.log('left-----' + imgRect.left);
+    // console.log('right-----' + imgRect.right);
+    // console.log('bottom-----' + imgRect.bottom);
 
     if (keys['ArrowUp'] && top > 0) {
         let newTop = Math.max(0, top - moveSpeed);
@@ -99,19 +107,20 @@ function update() {
         }
     }
         if(imgRect.top == 102 || imgRect.bottom == 156) {
-            goDoorUpDown = true
+            goDoorUpDown = true;
         }else {
-            goDoorUpDown = false
+            goDoorUpDown = false;
         }
         if(imgRect.left == 0) {
-            goDoorLeft = true
+            goDoorLeft = true;
         }else {
-            goDoorLeft = false
+            goDoorLeft = false;
         }
-
         if(goDoorUpDown && goDoorLeft) {
             goPage = 1
-            window.location.href = `first.html?data=${encodeURIComponent(goPage)}`;
+            setTimeout(() => {
+                window.location.href = `First.html?data=${encodeURIComponent(goPage)}`;
+            }, 500);
         }
     requestAnimationFrame(update);
 }

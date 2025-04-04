@@ -2,8 +2,8 @@ const urlParams = new URLSearchParams(window.location.search);
 const value = urlParams.get('data');
 if(value == 1){
     walkImg.style.position = 'absolute';
-walkImg.style.top = '102px';
-walkImg.style.left = '530px';
+    walkImg.style.top = '102px';
+    walkImg.style.left = '530px';
 }
 function update() {
     const rect = space.getBoundingClientRect();
@@ -23,7 +23,6 @@ function update() {
     // console.log('left-----' + imgRect.left);
     // console.log('right-----' + imgRect.right);
     // console.log('bottom-----' + imgRect.bottom);
-
 
     if (keys['ArrowUp'] && top > 0) {
         let newTop = Math.max(0, top - moveSpeed);
@@ -107,21 +106,22 @@ function update() {
             walkImg.style.left = `${newLeft}px`;
         }
     }
-        if(imgRect.top == 106 || imgRect.bottom == 160) {
-            goDoorUpDown = true
+        if(imgRect.top == 102 || imgRect.bottom == 156) {
+            goDoorUpDown = true;
         }else {
-            goDoorUpDown = false
+            goDoorUpDown = false;
         }
         if(imgRect.right == 640) {
-            goDoorRight = true
+            goDoorRight = true;
         }else {
-            goDoorRight = false
+            goDoorRight = false;
         }
 
         if(goDoorUpDown && goDoorRight) {
             goPage = 2;
-            window.location.href = `secondRoom.html?data=${encodeURIComponent(goPage)}`;
-
+            setTimeout(() => {
+                window.location.href = `SecondRoom.html?data=${encodeURIComponent(goPage)}`;
+            }, 500);
         }
     requestAnimationFrame(update);
 }
