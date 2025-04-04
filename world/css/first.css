@@ -1,0 +1,23 @@
+.wall01 {
+  position: absolute; 
+  width: 100px; 
+  height: 200px; 
+  left: 300px;
+  /* 삭제예정 */
+  font-size: 20px;
+  text-align: center;
+}
+.wall02 {
+  position: absolute; 
+  width: 100px; 
+  height: 200px; 
+  left: 300px;
+  bottom: 0;
+  /* 삭제예정 */
+  font-size: 20px;
+  text-align: center;
+}
+.doorRight {
+  border-top-right-radius: 40px;
+  border-bottom-right-radius: 40px;
+}

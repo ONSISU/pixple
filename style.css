@@ -7,20 +7,35 @@ body {
   margin: 0; 
   padding: 0;
   overflow: hidden; 
-  background-color: antiquewhite;
+  display: flex;
+  /* align-items: center; */
+  justify-content: center;
+  
 }
 .space {
   position: relative;
   overflow: hidden; 
-  width: 700px;
-  height: 600px;
-  background-color: aquamarine;
-  margin: 0 auto;
+  width: 640px;
+  height: 540px;
+  background-color: rgb(88, 90, 89);
+  display: inline-block;
 }
 #walkImg {
   width: 54px;
   height: 54px;
   position: absolute; /* 절대 위치 지정 */
-  top: 50%;
-  left: 50%;
+  /* top: 50%; */
+  /* left: 50%; */
+}
+.wall {
+  background-color: #a7a6a6b4; 
+}
+.door {
+  width: 40px;
+  height: 60px;
+  background-color: #d4d4d4;
+  display: inline-block;
+  overflow: hidden;
+  top: 100px;
+  position: relative;
 }
