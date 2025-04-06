@@ -1,5 +1,11 @@
 const urlParams = new URLSearchParams(window.location.search);
 const value = urlParams.get('data');
+
+if (urlParams.get('name')) {
+    const 캐릭명 = urlParams.get('name');
+    walkImg.src = `../img/${캐릭명}`;
+}
+
 if(value == 2){
     walkImg.style.position = 'absolute';
     walkImg.style.top = '50px';

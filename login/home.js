@@ -54,6 +54,7 @@ const goLogin = async () => {
 
   if (data?.resultCode == 100) {
     alert('로그인 성공');
+    location.href = '../character/select.html';
   } else {
     alert(data?.result || '로그인 실패');
   }

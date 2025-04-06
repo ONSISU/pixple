@@ -1,5 +1,11 @@
 const urlParams = new URLSearchParams(window.location.search);
 const value = urlParams.get('data');
+
+if (urlParams.get('name')) {
+    const 캐릭명 = urlParams.get('name');
+    walkImg.src = `../img/${캐릭명}`;
+}
+
 if(value == 1){
     walkImg.style.position = 'absolute';
     walkImg.style.top = '102px';
@@ -120,7 +126,7 @@ function update() {
         if(goDoorUpDown && goDoorRight) {
             goPage = 2;
             setTimeout(() => {
-                window.location.href = `SecondRoom.html?data=${encodeURIComponent(goPage)}`;
+                window.location.href = `SecondRoom.html?data=${encodeURIComponent(goPage)}&name=${urlParams.get('name')}`;
             }, 500);
         }
     requestAnimationFrame(update);
