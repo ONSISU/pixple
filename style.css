@@ -6,9 +6,12 @@
 body { 
   margin: 0; 
   padding: 0;
-  overflow: hidden; 
+  /* overflow: hidden;  */
   display: flex;
   justify-content: center;
+  align-items: center;
+  height: 100vh;
+
 }
 .space {
   position: relative;
@@ -16,7 +19,7 @@ body {
   width: 640px;
   height: 540px;
   background-color: rgb(88, 90, 89);
-  display: inline-block;
+  /* display: inline-block; */
 }
 #walkImg {
   width: 54px;
@@ -25,13 +28,20 @@ body {
 }
 .wall {
   background-color: #a7a6a6b4; 
+  font-size: 20px;
+  text-align: center;
 }
 .door {
-  width: 40px;
+  width: 8px;
   height: 60px;
   background-color: #d4d4d4;
-  display: inline-block;
-  overflow: hidden;
-  top: 100px;
+  /* overflow: hidden; */
   position: relative;
+  box-shadow: 0 0  7px  3px white;
+}
+
+#monster {
+  position: absolute; /* 절대 위치 설정 */
+  width: 48px; /* 이미지 크기 */
+  height: 48px; /* 이미지 크기 */
 }

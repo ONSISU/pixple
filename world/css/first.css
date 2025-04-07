@@ -3,9 +3,6 @@
   width: 100px; 
   height: 200px; 
   left: 300px;
-  /* 삭제예정 */
-  font-size: 20px;
-  text-align: center;
 }
 .wall02 {
   position: absolute; 
@@ -13,11 +10,10 @@
   height: 200px; 
   left: 300px;
   bottom: 0;
-  /* 삭제예정 */
-  font-size: 20px;
-  text-align: center;
 }
 .doorRight {
-  border-top-right-radius: 40px;
-  border-bottom-right-radius: 40px;
+  top: 100px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  float: right;
 }
