@@ -18,3 +18,27 @@
   float: left;
   top: 100px;
 }
+.street01 {
+  width: 384px; 
+  height: 53px; 
+  top: 106px;
+  left: 172px;
+}
+.street02 {
+  width: 64px; 
+  height: 318px; 
+  top: 53px;
+  left: 108px;
+}
+.street03 {
+  width: 64px; 
+  height: 318px; 
+  top: -212px;
+  left: 492px;
+}
+.street04 {
+  width: 384px; 
+  height: 53px; 
+  top: -265px;
+  left: 108px;
+}

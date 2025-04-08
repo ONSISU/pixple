@@ -1,4 +1,4 @@
-let walkImg = document.getElementById('walkImg');
+let walkImg = document.querySelector('.walkImg');
 let space = document.querySelector('.space');
 let moveSpeed = 2; // 이동 속도
 let keys = {};
@@ -15,7 +15,8 @@ const ctrlTranslateY = 5; // 컨트롤키와 함께 눌렀을 때 추가 이동 
 let isCtrlPressed = false; // 컨트롤키가 눌렸는지 여부
 let ArrowLeftPressed = false; // 좌우 중 어느 방향키 눌렀는지 여부
 
-const monster = document.getElementById('monster');
+const monster = document.querySelector('.monster');
+const monsterData = [];
 var xVal = 0;
 var yVal = 0;
 var speed = 0.3; // 속도 변경

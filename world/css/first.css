@@ -1,19 +1,47 @@
 .wall01 {
-  position: absolute; 
-  width: 100px; 
-  height: 200px; 
-  left: 300px;
+  position: relative; 
+  width: 576px; 
+  height: 53px; 
 }
 .wall02 {
-  position: absolute; 
-  width: 100px; 
-  height: 200px; 
-  left: 300px;
-  bottom: 0;
+  position: relative; 
+  top: 55px;
+  width: 64px; 
+  height: 432px; 
+}
+.wall03 {
+  position: relative; 
+  /* top: 234px; */
+  left: 129px;
+  width: 512px; 
+  height: 53px; 
+
 }
 .doorRight {
   top: 100px;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
-  float: right;
+  right: 0;
+  /* float: right; */
+}
+/*  
+    width - 64px씩
+    height - 53px씩
+ */
+ .street01 {
+  width: 192px; 
+  height: 53px; 
+  top: 106px;
+  left: 448px;
+}
+.street02 {
+  width: 448px; 
+  height: 53px; 
+  top: 212px;
+}
+.street03 {
+  width: 64px; 
+  height: 159px; 
+  top: 53px;
+  left: 448px;
 }

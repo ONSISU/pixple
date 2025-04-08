@@ -18,30 +18,35 @@ body {
   overflow: hidden; 
   width: 640px;
   height: 540px;
-  background-color: rgb(88, 90, 89);
-  /* display: inline-block; */
+  background-image: url("../pixple/img/green-carpet-texture.jpg");
+  z-index: 100;
 }
-#walkImg {
-  width: 54px;
-  height: 54px;
+.walkImg {
+  width: 62px;
+  height: 52px;
   position: absolute; /* 절대 위치 지정 */
+  z-index: 101;
 }
 .wall {
-  background-color: #a7a6a6b4; 
-  font-size: 20px;
-  text-align: center;
 }
 .door {
   width: 8px;
   height: 60px;
-  background-color: #d4d4d4;
+  background-color: burlywood;
   /* overflow: hidden; */
-  position: relative;
-  box-shadow: 0 0  7px  3px white;
+  position: absolute;
+  box-shadow: 0 0  7px  3px gray;
+  z-index: 101;
 }
 
-#monster {
+.monster {
   position: absolute; /* 절대 위치 설정 */
   width: 48px; /* 이미지 크기 */
   height: 48px; /* 이미지 크기 */
+  z-index: 101;
+}
+.street {
+  background-color: burlywood;
+  z-index: 100;
+  position: relative; 
 }
