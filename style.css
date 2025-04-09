@@ -77,3 +77,28 @@ body {
   display: none;
   z-index: 101;
 }
+.skill-animation-right {
+  animation: skillMoveRight 0.5s forwards; /* 0.5초 동안 skillMoveRight 애니메이션 실행 */
+}
+
+.skill-animation-left {
+  animation: skillMoveLeft 0.5s forwards; /* 0.5초 동안 skillMoveLeft 애니메이션 실행 */
+}
+
+@keyframes skillMoveRight {
+  from {
+      transform: translateX(0); /* 시작 위치 (제자리) */
+  }
+  to {
+      transform: translateX(200px); /* 끝 위치 (오른쪽으로 100px 이동) */
+  }
+}
+
+@keyframes skillMoveLeft {
+  from {
+      transform: translateX(0); /* 시작 위치 (제자리) */
+  }
+  to {
+      transform: translateX(-200px); /* 끝 위치 (왼쪽으로 100px 이동) */
+  }
+}
