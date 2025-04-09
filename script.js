@@ -16,13 +16,14 @@ let isCtrlPressed = false; // 컨트롤키가 눌렸는지 여부
 let ArrowLeftPressed = false; // 좌우 중 어느 방향키 눌렀는지 여부
 
 const monster = document.querySelector('.monster');
-const monsterData = [];
+const hitEffectImage = document.querySelector('.hitEffectImage');
+const monsters = [];
+
 var xVal = 0;
 var yVal = 0;
 var speed = 0.3; // 속도 변경
 var angle = Math.random() * 2 * Math.PI;
-var changeAngleProbability = 0.005; // 각도 변경 확률 (낮출수록 직선에 가깝게 움직임)
-let walkImgMoving = true; // walkImg 움직임 제어 변수
+var changeAngleProbability = 0.01; // 각도 변경 확률 (낮출수록 직선에 가깝게 움직임)
 
 document.addEventListener('keydown', (event) => {
     keys[event.key] = true;
@@ -32,11 +33,15 @@ document.addEventListener('keyup', (event) => {
     keys[event.key] = false;
 });
 
-function isColliding(rect1, rect2) {
-    return !(rect1.right < rect2.left || 
-        rect1.left > rect2.right || 
-        rect1.bottom < rect2.top || 
-        rect1.top > rect2.bottom);
+function isColliding(player, monster) {
+    const playerRect = player.getBoundingClientRect();
+    const monsterRect = monster.element.getBoundingClientRect();
+    return !(
+        playerRect.top > monsterRect.bottom ||
+        playerRect.right < monsterRect.left ||
+        playerRect.bottom < monsterRect.top ||
+        playerRect.left > monsterRect.right
+    );
 }
 
 // 컨트롤 키가 눌렸을 때
@@ -63,20 +68,3 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-// 애니메이션 루프
-function animate1() {
-    if (isCtrlPressed) {
-        if(ArrowLeftPressed){
-            walkImg.style.transform = `translate(-5px, -3px)`;
-        }else {
-            walkImg.style.transform = `translate(5px, -3px)`;
-        }
-    } else {
-        // 원래 위치로 되돌리기
-        walkImg.style.transform = `translate(0, 0)`;
-    }
-    requestAnimationFrame(animate1);
-}
-
-// 애니메이션 시작
-animate1();

@@ -1,5 +1,6 @@
 const urlParams = new URLSearchParams(window.location.search);
 const value = urlParams.get('data');
+const maxMonsters = 5; // 최대 몬스터 수
 
 if (urlParams.get('name')) {
     const 캐릭명 = urlParams.get('name');
@@ -24,19 +25,6 @@ function update() {
     bottom: top + walkImg.offsetHeight
     };
     
-      // 움직일 이미지와의 충돌 검사
-  const movingImgRect = {
-    top: monster.offsetTop,
-    left: monster.offsetLeft,
-    right: monster.offsetLeft + monster.offsetWidth,
-    bottom: monster.offsetTop + monster.offsetHeight
-  };
-
-  if (isColliding(imgRect, movingImgRect)) {
-    changeMovingImageDirection();
-    stopWalkImg();
-  }
-
     let canMoveUp = true;
     let canMoveDown = true;
     let canMoveLeft = true;
@@ -98,77 +86,210 @@ function update() {
     } else {
         goDoorRight = false;
     }
-
     if(goDoorUpDown && goDoorRight) {
         goPage = 1;
         window.location.href = `First.html?data=${encodeURIComponent(goPage)}&name=${urlParams.get('name')}`;
     }
-
     requestAnimationFrame(update);
 }
 
-function changeMovingImageDirection() {
-    const moveDistance = 10; // 움직일 거리
-    const directionX = Math.random() > 0.5 ? 1 : -1; // 랜덤 방향
-    const directionY = Math.random() > 0.5 ? 1 : -1;
+// 몬스터 생성 함수
+function createMonster() {
+    if (monsters.length < maxMonsters) {
+        // 몬스터 컨테이너 생성
+        const monsterContainer = document.createElement('div');
+        monsterContainer.className = 'monster-container';
+        monsterContainer.style.position = 'absolute';
 
-    monster.style.left = `${monster.offsetLeft + moveDistance * directionX}px`;
-    monster.style.top = `${monster.offsetTop + moveDistance * directionY}px`;
+        // 몬스터 이미지 생성
+        const monster = document.createElement('img');
+        monster.src = '../img/슬라임.gif';
+        monster.alt = '몬스터';
+        monster.className = 'monster';
 
-    // 움직이는 범위 제한 (선택 사항)
-    const containerRect = space.getBoundingClientRect();
-    if (monster.offsetLeft < 0) monster.style.left = '0px';
-    if (monster.offsetTop < 0) monster.style.top = '0px';
-    if (monster.offsetLeft + monster.offsetWidth > containerRect.width) {
-        monster.style.left = `${containerRect.width - monster.offsetWidth}px`;
-    }
-    if (monster.offsetTop + monster.offsetHeight > containerRect.height) {
-        monster.style.top = `${containerRect.height - monster.offsetHeight}px`;
+        // 체력바 생성
+        const healthBar = document.createElement('div');
+        healthBar.className = 'health-bar';
+        const healthBarInner = document.createElement('div');
+        healthBarInner.className = 'health-bar-inner';
+        healthBar.appendChild(healthBarInner);
+
+        // 초기 위치 설정
+        const xVal = Math.random() * (space.offsetWidth - 48);
+        const yVal = Math.random() * (space.offsetHeight - 48);
+        monsterContainer.style.left = xVal + 'px';
+        monsterContainer.style.top = yVal + 'px';
+
+        // 초기 속도, 각도 설정
+        const speed = 1 + Math.random() * 0.5;
+        const angle = Math.random() * 2 * Math.PI;
+        const changeAngleProbability = 0.01;
+
+        // 몬스터 데이터 객체 생성 (체력 정보 추가)
+        const monsterData = {
+            container: monsterContainer, // 몬스터 컨테이너
+            element: monster,
+            healthBarInner: healthBarInner, // 체력바 inner 엘리먼트
+            x: xVal,
+            y: yVal,
+            speed: speed,
+            angle: angle,
+            changeAngleProbability: changeAngleProbability,
+            health: 100, // 초기 체력
+            lastAttacked: 0 // 마지막 공격 시간 초기화
+        };
+
+        // 몬스터 컨테이너에 몬스터와 체력바 추가
+        monsterContainer.appendChild(healthBar);
+        monsterContainer.appendChild(monster);
+        space.appendChild(monsterContainer);
+        monsters.push(monsterData);
     }
 }
 
-function stopWalkImg() {
-    walkImg.style.transform = `translate(-5px, -3px)`;
-    walkImg.style.opacity = `0.5`;
-    console.log("닿음");
-    walkImgMoving = false;
-    setTimeout(() => {
-        walkImg.style.opacity = `1`;
-        walkImgMoving = true;
-    }, 1000);
+// 몬스터 움직임 함수
+function moveMonster(monsterData) {
+    const monsterContainer = monsterData.container;
+    const monster = monsterData.element;
+
+    // x, y 좌표 업데이트
+    monsterData.x += monsterData.speed * Math.cos(monsterData.angle);
+    monsterData.y += monsterData.speed * Math.sin(monsterData.angle);
+
+    // 각도 변경 (매우 낮은 확률로)
+    if (Math.random() < monsterData.changeAngleProbability) {
+        monsterData.angle = Math.random() * 2 * Math.PI;
+    }
+
+    // 경계 확인
+    if (monsterData.x < 0) {
+        monsterData.x = 0;
+        monsterData.angle = Math.random() * 2 * Math.PI;
+    } else if (monsterData.x + monster.width > space.offsetWidth) {
+        monsterData.x = space.offsetWidth - monster.width;
+        monsterData.angle = Math.random() * 2 * Math.PI;
+    }
+    if (monsterData.y < 0) {
+        monsterData.y = 0;
+        monsterData.angle = Math.random() * 2 * Math.PI;
+    } else if (monsterData.y + monster.height > space.offsetHeight) {
+        monsterData.y = space.offsetHeight - monster.height;
+        monsterData.angle = Math.random() * 2 * Math.PI;
+    }
+    monsterContainer.style.left = monsterData.x + 'px';
+    monsterContainer.style.top = monsterData.y + 'px';
+
+    // 체력바 업데이트
+    updateHealthBar(monsterData);
+
+    // 체력이 0 이하가 되면 몬스터 제거
+    if (monsterData.health <= 0) {
+        // 몬스터 컨테이너 제거
+        space.removeChild(monsterContainer);
+
+        // 몬스터 배열에서 제거
+        const index = monsters.indexOf(monsterData);
+        if (index > -1) {
+            monsters.splice(index, 1);
+        }
+    }
+}
+
+// 체력바 업데이트 함수
+function updateHealthBar(monsterData) {
+    const healthPercent = monsterData.health + '%';
+    monsterData.healthBarInner.style.width = healthPercent;
+
+    // 체력에 따라 체력바 색상 변경 (선택 사항)
+    if (monsterData.health > 50) {
+        monsterData.healthBarInner.style.backgroundColor = 'green';
+    } else if (monsterData.health > 20) {
+        monsterData.healthBarInner.style.backgroundColor = 'yellow';
+    } else {
+        monsterData.healthBarInner.style.backgroundColor = 'red';
+    }
+}
+
+// 애니메이션 루프
+function attackAnimate() {
+    if (isCtrlPressed) {
+        if(ArrowLeftPressed){
+            walkImg.style.transform = `translate(-5px, -3px)`;
+        }else {
+            walkImg.style.transform = `translate(5px, -3px)`;
+        }
+             // 몬스터 공격 로직
+        for (let i = 0; i < monsters.length; i++) {
+            const monster = monsters[i];
+
+            // 충돌 감지
+            if (isColliding(walkImg, monster)) {
+                const currentTime = Date.now();
+                if (currentTime - monster.lastAttacked >= 300) { // 공격시간
+                    // 몬스터 체력 감소
+                    monster.health -= 20;
+                    updateHealthBar(monster);
+
+                    // 마지막 공격 시간 업데이트
+                    monster.lastAttacked = currentTime;
+
+                    // 체력이 0 이하가 되면 몬스터 제거 (기존 코드 활용)
+                    if (monster.health <= 0) {
+                        space.removeChild(monster.container);
+                        const index = monsters.indexOf(monster);
+                        if (index > -1) {
+                            monsters.splice(index, 1);
+                        }
+                    }
+                }
+            }
+        }
+    } else {
+        // 원래 위치로 되돌리기
+        walkImg.style.transform = `translate(0, 0)`;
+    }
+    // 플레이어와 몬스터 충돌 감지 및 이미지 표시 로직 (공격과 관계없이)
+    for (let i = 0; i < monsters.length; i++) {
+        const monster = monsters[i];
+
+        // 충돌 감지
+        if (isColliding(walkImg, monster)) {
+            walkImg.style.transform = `translate(-5px, -3px)`;
+            // 이미지 표시 (사용자 위치에)
+            hitEffectImage.style.left = walkImg.offsetLeft + 25 + 'px';
+            hitEffectImage.style.top = walkImg.offsetTop - 20 + 'px';
+            hitEffectImage.style.display = 'block';
+
+            // 1초 후에 이미지 숨김
+            setTimeout(() => {
+                hitEffectImage.style.display = 'none';
+            }, 300); // 1000ms = 1초
+        }
+    }
+    requestAnimationFrame(attackAnimate);
 }
 
 function animate() {
-    // x, y 좌표 업데이트
-    xVal += speed * Math.cos(angle);
-    yVal += speed * Math.sin(angle);
-
-    // 각도 변경 (매우 낮은 확률로)
-    if (Math.random() < changeAngleProbability) {
-        angle = Math.random() * 2 * Math.PI;
+    // 모든 몬스터 움직이기
+    for (let i = 0; i < monsters.length; i++) {
+        moveMonster(monsters[i]);
     }
-
-    // 경계 확인 (container 안에서만 움직이도록)
-    if (xVal < 0) {
-        xVal = 0;
-        angle = Math.random() * 2 * Math.PI;
-    } else if (xVal + monster.width > space.offsetWidth) {
-        xVal = space.offsetWidth - monster.width;
-        angle = Math.random() * 2 * Math.PI;
-    }
-
-    if (yVal < 0) {
-        yVal = 0;
-        angle = Math.random() * 2 * Math.PI;
-    } else if (yVal + monster.height > space.offsetHeight) {
-        yVal = space.offsetHeight - monster.height;
-        angle = Math.random() * 2 * Math.PI;
-    }
-
-    monster.style.left = xVal + 'px';
-    monster.style.top = yVal + 'px';
-    
     requestAnimationFrame(animate);
 }
+
+// 초기 몬스터 생성 (최대 몬스터 수까지)
+for (let i = 0; i < maxMonsters; i++) {
+    createMonster();
+}
+
+// 몬스터 생성 인터벌 설정
+monsterCreationInterval = setInterval(() => {
+    if (monsters.length < maxMonsters) {
+        createMonster();
+    }
+}, 3000); // 10초 (10000 밀리초)
+
+// 애니메이션 시작
+attackAnimate();
 update();
 animate(); 

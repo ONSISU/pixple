@@ -17,18 +17,17 @@
   height: 53px; 
 
 }
-.doorRight {
+.door01 {
   top: 100px;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
   right: 0;
-  /* float: right; */
 }
 /*  
     width - 64px씩
     height - 53px씩
  */
- .street01 {
+.street01 {
   width: 192px; 
   height: 53px; 
   top: 106px;
