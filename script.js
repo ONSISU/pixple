@@ -14,17 +14,23 @@ const ctrlTranslateX = 5; // 컨트롤키와 함께 눌렀을 때 추가 이동 
 const ctrlTranslateY = 5; // 컨트롤키와 함께 눌렀을 때 추가 이동 Y
 let isCtrlPressed = false; // 컨트롤키가 눌렸는지 여부
 let ArrowLeftPressed = false; // 좌우 중 어느 방향키 눌렀는지 여부
-let isShiftPressed = false; // 쉬프트 키가 눌렸는지 여부
-let skillImage = null; // 스킬 이미지 변수 초기화
-let lastSkillUseTime = 0; // 마지막 스킬 사용 시간
-const skillCoolTime = 10000; // 쿨타임 (5초)
+
+let A_KeyPressed = false; // a키(스킬1)가 눌렸는지 여부
+let S_KeyPressed = false; // s키(스킬2)가 눌렸는지 여부
+let skillImage01 = null; // 스킬 이미지 변수 초기화
+let skillImage02 = null; // 스킬 이미지 변수 초기화
+let Skill01UseTime = 0; // 마지막 스킬 사용 시간
+let Skill02UseTime = 0; // 마지막 스킬 사용 시간
+let skillCoolTime01 = 3000; // 쿨타임
+let skillCoolTime02 = 6000; 
 
 const monster = document.querySelector('.monster');
 const hitEffectImage = document.querySelector('.hitEffectImage');
-const skillLeft = document.querySelector('.skillLeft');
-const skillRight = document.querySelector('.skillRight');
 // 쿨타임 게이지 요소 가져오기
-const skillCoolTimeCircle = document.querySelector('.skill01-coolTime-circle');
+const skillCoolTimeCircle01 = document.querySelector('.skill01-coolTime-circle');
+const skillCoolTimeCircle02 = document.querySelector('.skill02-coolTime-circle');
+// Skill02UseTime = Date.now() - skillCoolTime02;
+
 const monsters = [];
 let maxMonsters = 5; // 최대 몬스터 수
 
@@ -79,57 +85,104 @@ document.addEventListener('keydown', (event) => {
 
 // 키 입력 이벤트 핸들러 수정
 document.addEventListener('keydown', (event) => {
-    if (event.key === 'Shift') {
+    if (event.key === 'a') {
         const currentTime = Date.now(); // 현재 시간
-        const timeSinceLastSkillUse = currentTime - lastSkillUseTime; // 마지막 스킬 사용 후 경과 시간
-
-        if (timeSinceLastSkillUse >= 3000) {
-            isShiftPressed = true;
-            lastSkillUseTime = currentTime; // 마지막 스킬 사용 시간 업데이트
+        let timeSinceLastSkillUse = currentTime - Skill01UseTime; // 마지막 스킬 사용 후 경과 시간
+        if (timeSinceLastSkillUse >= skillCoolTime01) {
+            A_KeyPressed = true;
+            Skill01UseTime = currentTime; // 마지막 스킬 사용 시간 업데이트
             // 스킬 이미지 위치 설정 (사용자 위치)
-            skillImage = document.createElement('img');
-            skillImage.style.position = 'absolute';
-            skillImage.style.width = '100px'; // 스킬 이미지 크기 설정
-            skillImage.style.height = '40px'; // 스킬 이미지 크기 설정
-            skillImage.style.left = walkImg.offsetLeft + 'px';
-            skillImage.style.top = walkImg.offsetTop + 'px';
-            skillImage.style.display = 'block';
-            skillImage.style.zIndex = '101';
+            skillImage01 = document.createElement('img');
+            skillImage01.style.position = 'absolute';
+            skillImage01.style.width = '100px'; // 스킬 이미지 크기 설정
+            skillImage01.style.height = '40px'; // 스킬 이미지 크기 설정
+            skillImage01.style.left = walkImg.offsetLeft + 'px';
+            skillImage01.style.top = walkImg.offsetTop + 'px';
+            skillImage01.style.display = 'block';
+            skillImage01.style.zIndex = '101';
 
             // 애니메이션 클래스 추가 (방향에 따라 클래스 추가)
             if (ArrowLeftPressed) {
-                skillImage.src = '../img/skillLeft.png'; // 왼쪽 이미지
-                skillImage.classList.add('skill-animation-left');
-                skillImage.classList.remove('skill-animation-right');
+                skillImage01.src = '../img/skill01Left.png'; // 왼쪽 이미지
+                skillImage01.classList.add('skill01-animation-left');
+                skillImage01.classList.remove('skill01-animation-right');
             } else {
-                skillImage.src = '../img/skillRight.png'; // 오른쪽 이미지
-                skillImage.classList.add('skill-animation-right');
-                skillImage.classList.remove('skill-animation-left');
+                skillImage01.src = '../img/skill01Right.png'; // 오른쪽 이미지
+                skillImage01.classList.add('skill01-animation-right');
+                skillImage01.classList.remove('skill01-animation-left');
             }
 
-            space.appendChild(skillImage); // space에 추가
-            startCoolTime();
+            space.appendChild(skillImage01); // space에 추가
+            startCoolTime01();
             // 애니메이션이 끝나면 skillAnimationEnd 함수 실행
-            skillImage.addEventListener('animationend', skillAnimationEnd);
-        } else {
-            console.log('스킬은 3초에 한 번만 사용할 수 있습니다.');
-            // 또는 사용자에게 시각적인 피드백을 제공 (예: "아직 스킬을 사용할 수 없습니다" 메시지 표시)
+            skillImage01.addEventListener('animationend', skill01AnimationEnd);
+        }
+    }
+});
+document.addEventListener('keyup', (event) => {
+    if (event.key === 'a') {
+        A_KeyPressed = false;
+    } 
+});
+// 키 입력 이벤트 핸들러 수정
+document.addEventListener('keydown', (event) => {
+    if (event.key === 's') {
+        const currentTime = Date.now();
+        let timeSinceLastSkillUse = currentTime - Skill02UseTime;
+
+        if (timeSinceLastSkillUse >= skillCoolTime02) {
+            S_KeyPressed = true;
+            Skill02UseTime = currentTime;
+            useSkill02(); // 스킬 사용 함수 호출
+            startCoolTime02();
         }
     }
 });
 
 document.addEventListener('keyup', (event) => {
-    if (event.key === 'Shift') {
-        isShiftPressed = false;
+    if (event.key === 's') {
+        S_KeyPressed = false;
     } 
 });
+function useSkill02() { // 스킬 사용 함수
+    if (!skillImage02) { // 스킬 이미지가 없으면 생성
+        skillImage02 = document.createElement('img');
+        skillImage02.style.position = 'absolute';
+        skillImage02.style.borderRadius = '50%';
+        skillImage02.style.backgroundColor = 'rgba(45, 59, 255, 0.3)';
+        skillImage02.style.pointerEvents = 'none';
+        skillImage02.style.zIndex = '101';
+        space.appendChild(skillImage02); // space에 추가
+        skillImage02.addEventListener('animationend', skill02AnimationEnd); // 애니메이션 종료 이벤트 리스너 등록
+    }
+
+    skillImage02.classList.remove('skill-effect'); // 기존 애니메이션 클래스 제거
+    void skillImage02.offsetWidth; // reflow 발생 (애니메이션 재시작 트릭)
+    skillImage02.classList.add('skill-effect'); // 애니메이션 클래스 추가
+
+    skillImage02.style.left = (walkImg.offsetLeft - 100) + 'px'; // 이펙트 위치 조정
+    skillImage02.style.top = (walkImg.offsetTop - 100) + 'px'; // 이펙트 위치 조정
+    skillImage02.style.width = (100 * 2) + 'px'; // 스킬 범위에 맞게 조정
+    skillImage02.style.height = (100 * 2) + 'px'; // 스킬 범위에 맞게 조정
+    // 몬스터 데미지 초기화
+    for (let i = 0; i < monsters.length; i++) {
+        monsters[i].skill02DamageApplied = false; // 데미지 적용 여부 초기화
+    }
+}
 // 스킬 애니메이션이 끝났을 때 실행되는 함수
-function skillAnimationEnd() {
-    if (skillImage) {
-        skillImage.classList.remove('skill-animation-right'); // 애니메이션 클래스 제거
-        skillImage.classList.remove('skill-animation-left'); // 애니메이션 클래스 제거
-        space.removeChild(skillImage); // 스킬 이미지 제거
-        skillImage = null; // 스킬 이미지 변수 초기화
+function skill01AnimationEnd() {
+    if (skillImage01) {
+        skillImage01.classList.remove('skill01-animation-right'); // 애니메이션 클래스 제거
+        skillImage01.classList.remove('skill01-animation-left'); // 애니메이션 클래스 제거
+        space.removeChild(skillImage01); // 스킬 이미지 제거
+        skillImage01 = null; // 스킬 이미지 변수 초기화
+    }
+}
+function skill02AnimationEnd() {
+    if (skillImage02) {
+        skillImage02.classList.remove('skill-effect'); // 애니메이션 클래스 제거
+        space.removeChild(skillImage02); // 스킬 이미지 제거
+        skillImage02 = null; // 스킬 이미지 변수 초기화
     }
 }
 
@@ -177,8 +230,6 @@ function createMonster() {
             changeAngleProbability: changeAngleProbability,
             health: 100, // 초기 체력
             lastAttacked: 0, // 마지막 공격 시간 초기화
-            damageReceived: false // 데미지 받았는지 여부 플래그 추가
-
         };
 
         // 몬스터 컨테이너에 몬스터와 체력바 추가
@@ -186,6 +237,21 @@ function createMonster() {
         monsterContainer.appendChild(monster);
         space.appendChild(monsterContainer);
         monsters.push(monsterData);
+    }
+}
+
+// 체력바 업데이트 함수
+function updateHealthBar(monsterData) {
+    const healthPercent = monsterData.health + '%';
+    monsterData.healthBarInner.style.width = healthPercent;
+
+    // 체력에 따라 체력바 색상 변경 (선택 사항)
+    if (monsterData.health > 50) {
+        monsterData.healthBarInner.style.backgroundColor = 'green';
+    } else if (monsterData.health > 20) {
+        monsterData.healthBarInner.style.backgroundColor = 'yellow';
+    } else {
+        monsterData.healthBarInner.style.backgroundColor = 'red';
     }
 }
 
@@ -239,21 +305,6 @@ function moveMonster(monsterData) {
     }
 }
 
-// 체력바 업데이트 함수
-function updateHealthBar(monsterData) {
-    const healthPercent = monsterData.health + '%';
-    monsterData.healthBarInner.style.width = healthPercent;
-
-    // 체력에 따라 체력바 색상 변경 (선택 사항)
-    if (monsterData.health > 50) {
-        monsterData.healthBarInner.style.backgroundColor = 'green';
-    } else if (monsterData.health > 20) {
-        monsterData.healthBarInner.style.backgroundColor = 'yellow';
-    } else {
-        monsterData.healthBarInner.style.backgroundColor = 'red';
-    }
-}
-
 // 애니메이션 루프
 function attackAnimate() {
     if (isCtrlPressed) {
@@ -268,7 +319,6 @@ function attackAnimate() {
 
             // 충돌 감지
             if (isColliding(walkImg, monster)) {
-                
                 const currentTime = Date.now();
                 if (currentTime - monster.lastAttacked >= 300) { // 공격시간
                     // 몬스터 체력 감소
@@ -294,33 +344,52 @@ function attackAnimate() {
         walkImg.style.transform = `translate(0, 0)`;
     }
     // 몬스터와 스킬 이미지 충돌 감지
-    if (skillImage && (skillImage.classList.contains('skill-animation-right') || skillImage.classList.contains('skill-animation-left'))) { // 스킬 애니메이션 중일 때만 충돌 감지
+    if (skillImage01 && (skillImage01.classList.contains('skill01-animation-right') || skillImage01.classList.contains('skill01-animation-left'))) { // 스킬 애니메이션 중일 때만 충돌 감지
         for (let i = 0; i < monsters.length; i++) {
             const monster = monsters[i];
             // 충돌 감지
-            if (isColliding(skillImage, monster)) {
+            if (isColliding(skillImage01, monster)) {
                 const currentTime = Date.now();
-                if (currentTime - monster.lastAttacked >= 3000) { // 공격시간
-                // 몬스터 체력 감소
+                if (currentTime - monster.lastAttacked >= skillCoolTime01) { // 공격시간
+                    // 몬스터 체력 감소
                     monster.health -= 30; // 예시: 30 데미지
                     updateHealthBar(monster);
 
                     // 마지막 공격 시간 업데이트
                     monster.lastAttacked = currentTime;
 
-                // 체력이 0 이하가 되면 몬스터 제거 (기존 코드 활용)
-                if (monster.health <= 0) {
-                    space.removeChild(monster.container);
+                    // 체력이 0 이하가 되면 몬스터 제거 (기존 코드 활용)
+                    if (monster.health <= 0) {
+                        space.removeChild(monster.container);
 
-                    const index = monsters.indexOf(monster);
-                    if (index > -1) {
-                        monsters.splice(index, 1);
+                        const index = monsters.indexOf(monster);
+                        if (index > -1) {
+                            monsters.splice(index, 1);
+                        }
                     }
                 }
             }
+        }
+    }
+    if (skillImage02 && (skillImage02.classList.contains('skill-effect'))) { 
+        for (let i = 0; i < monsters.length; i++) {
+            const monster = monsters[i];
+
+            if (isColliding(skillImage02, monster) && !monster.skill02DamageApplied) {
+                // 충돌 감지 및 데미지 미적용 상태 확인
+                monster.health -= 30; // 데미지 적용
+                updateHealthBar(monster);
+                monster.skill02DamageApplied = true; // 데미지 적용 상태로 변경
+
+                if (monster.health <= 0) {
+                    space.removeChild(monster.container);
+                    monsters.splice(i, 1);
+                    i--; // 몬스터 제거 후 인덱스 조정
+                }
             }
         }
     }
+
     // 플레이어와 몬스터 충돌 감지 및 이미지 표시 로직 (공격과 관계없이)
     for (let i = 0; i < monsters.length; i++) {
         const monster = monsters[i];
@@ -343,25 +412,43 @@ function attackAnimate() {
 }
 
 // 쿨타임 시작 함수
-function startCoolTime() {
-    let startTime = performance.now();
-    let animationFrameId;
+function startCoolTime01() {
+    let startTime = Date.now();
+    let animationFrameId01;
 
     function updateCoolTimeCircle() {
-        const elapsedTime = performance.now() - startTime;
-        let angle = Math.min((elapsedTime / skillCoolTime) * 360, 360); // 0 ~ 360
-
-        skillCoolTimeCircle.style.background = `conic-gradient(blue 0%, blue ${angle}%, transparent ${angle}%, transparent 100%)`;
+        const elapsedTime = Date.now() - startTime;
+        let angle = Math.min((elapsedTime / 11000) * 360, 360); // 0 ~ 360
+        skillCoolTimeCircle01.style.background = `conic-gradient(blue 0%, blue ${angle}%, transparent ${angle}%, transparent 100%)`;
 
         if (angle < 360) {
-            animationFrameId = requestAnimationFrame(updateCoolTimeCircle);
+            animationFrameId01 = requestAnimationFrame(updateCoolTimeCircle);
         } else {
             // 쿨타임 완료 시점 보정
-            skillCoolTimeCircle.style.background = `conic-gradient(blue 0%, blue 360%, transparent 360%, transparent 100%)`;
+            skillCoolTimeCircle01.style.background = `conic-gradient(blue 0%, blue 360%, transparent 360%, transparent 100%)`;
         }
     }
+    animationFrameId01 = requestAnimationFrame(updateCoolTimeCircle);
+}
+// 쿨타임 시작 함수
+function startCoolTime02() {
+    let startTime = Date.now();
+    let animationFrameId02;
 
-    animationFrameId = requestAnimationFrame(updateCoolTimeCircle);
+    function updateCoolTimeCircle() {
+        const elapsedTime = Date.now() - startTime;
+        let angle = Math.min((elapsedTime / 22000) * 360, 360); // 0 ~ 360
+
+        skillCoolTimeCircle02.style.background = `conic-gradient(blue 0%, blue ${angle}%, transparent ${angle}%, transparent 100%)`;
+
+        if (angle < 360) {
+            animationFrameId02 = requestAnimationFrame(updateCoolTimeCircle);
+        } else {
+            // 쿨타임 완료 시점 보정
+            skillCoolTimeCircle02.style.background = `conic-gradient(blue 0%, blue 360%, transparent 360%, transparent 100%)`;
+        }
+    }
+    animationFrameId02 = requestAnimationFrame(updateCoolTimeCircle);
 }
 
 function animate() {
@@ -382,15 +469,7 @@ monsterCreationInterval = setInterval(() => {
     if (monsters.length < maxMonsters) {
         createMonster();
     } 
-}, 3000); // 10초 (10000 밀리초)
-
-// 스킬 애니메이션이 끝났을 때 실행되는 함수
-function skillAnimationEnd() {
-    skillImage.classList.remove('skill-animation-right'); // 애니메이션 클래스 제거
-    skillImage.classList.remove('skill-animation-left'); // 애니메이션 클래스 제거
-    skillImage.style.display = 'none'; // 스킬 이미지 숨김
-    skillImage.removeEventListener('animationend', skillAnimationEnd); // 이벤트 리스너 제거
-}
+}, 3000); // 3초에 1마리씩
 
 // 에니메이션 시작
 attackAnimate();
