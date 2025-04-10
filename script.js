@@ -17,19 +17,22 @@ let ArrowLeftPressed = false; // 좌우 중 어느 방향키 눌렀는지 여부
 let isShiftPressed = false; // 쉬프트 키가 눌렸는지 여부
 let skillImage = null; // 스킬 이미지 변수 초기화
 let lastSkillUseTime = 0; // 마지막 스킬 사용 시간
+const skillCoolTime = 10000; // 쿨타임 (5초)
 
 const monster = document.querySelector('.monster');
 const hitEffectImage = document.querySelector('.hitEffectImage');
 const skillLeft = document.querySelector('.skillLeft');
 const skillRight = document.querySelector('.skillRight');
+// 쿨타임 게이지 요소 가져오기
+const skillCoolTimeCircle = document.querySelector('.skill01-coolTime-circle');
 const monsters = [];
-const maxMonsters = 5; // 최대 몬스터 수
+let maxMonsters = 5; // 최대 몬스터 수
 
-var xVal = 0;
-var yVal = 0;
-var speed = 0.3; // 속도 변경
-var angle = Math.random() * 2 * Math.PI;
-var changeAngleProbability = 0.01; // 각도 변경 확률 (낮출수록 직선에 가깝게 움직임)
+let xVal = 0;
+let yVal = 0;
+let speed = 0.3; // 속도 변경
+let angle = Math.random() * 2 * Math.PI;
+let changeAngleProbability = 0.01; // 각도 변경 확률 (낮출수록 직선에 가깝게 움직임)
 
 document.addEventListener('keydown', (event) => {
     keys[event.key] = true;
@@ -80,7 +83,7 @@ document.addEventListener('keydown', (event) => {
         const currentTime = Date.now(); // 현재 시간
         const timeSinceLastSkillUse = currentTime - lastSkillUseTime; // 마지막 스킬 사용 후 경과 시간
 
-        if (timeSinceLastSkillUse >= 3000) { // 5000ms = 5초
+        if (timeSinceLastSkillUse >= 3000) {
             isShiftPressed = true;
             lastSkillUseTime = currentTime; // 마지막 스킬 사용 시간 업데이트
             // 스킬 이미지 위치 설정 (사용자 위치)
@@ -105,7 +108,7 @@ document.addEventListener('keydown', (event) => {
             }
 
             space.appendChild(skillImage); // space에 추가
-
+            startCoolTime();
             // 애니메이션이 끝나면 skillAnimationEnd 함수 실행
             skillImage.addEventListener('animationend', skillAnimationEnd);
         } else {
@@ -269,7 +272,7 @@ function attackAnimate() {
                 const currentTime = Date.now();
                 if (currentTime - monster.lastAttacked >= 300) { // 공격시간
                     // 몬스터 체력 감소
-                    monster.health -= 20; // 예시: 10 데미지
+                    monster.health -= 20;
                     updateHealthBar(monster);
 
                     // 마지막 공격 시간 업데이트
@@ -297,9 +300,9 @@ function attackAnimate() {
             // 충돌 감지
             if (isColliding(skillImage, monster)) {
                 const currentTime = Date.now();
-                if (currentTime - monster.lastAttacked >= 1000) { // 공격시간
+                if (currentTime - monster.lastAttacked >= 3000) { // 공격시간
                 // 몬스터 체력 감소
-                    monster.health -= 30; // 예시: 20 데미지
+                    monster.health -= 30; // 예시: 30 데미지
                     updateHealthBar(monster);
 
                     // 마지막 공격 시간 업데이트
@@ -337,6 +340,28 @@ function attackAnimate() {
         }
     }
     requestAnimationFrame(attackAnimate);
+}
+
+// 쿨타임 시작 함수
+function startCoolTime() {
+    let startTime = performance.now();
+    let animationFrameId;
+
+    function updateCoolTimeCircle() {
+        const elapsedTime = performance.now() - startTime;
+        let angle = Math.min((elapsedTime / skillCoolTime) * 360, 360); // 0 ~ 360
+
+        skillCoolTimeCircle.style.background = `conic-gradient(blue 0%, blue ${angle}%, transparent ${angle}%, transparent 100%)`;
+
+        if (angle < 360) {
+            animationFrameId = requestAnimationFrame(updateCoolTimeCircle);
+        } else {
+            // 쿨타임 완료 시점 보정
+            skillCoolTimeCircle.style.background = `conic-gradient(blue 0%, blue 360%, transparent 360%, transparent 100%)`;
+        }
+    }
+
+    animationFrameId = requestAnimationFrame(updateCoolTimeCircle);
 }
 
 function animate() {

@@ -5,7 +5,6 @@ if (urlParams.get('name')) {
     const 캐릭명 = urlParams.get('name');
     walkImg.src = `../img/${캐릭명}`;
 }
-
 if(value == 1){
     walkImg.style.top = '102px';
     walkImg.style.left = '530px';
