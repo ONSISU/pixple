@@ -18,6 +18,12 @@
   float: left;
   top: 100px;
 }
+.door02 {
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px;
+  bottom: 0;
+  right: 200px;
+}
 .street01 {
   width: 384px; 
   height: 53px; 
@@ -41,4 +47,19 @@
   height: 53px; 
   top: -288px;
   left: 100px;
+}
+.notice01 {
+  width: 60px;
+  height: 30px;
+  bottom: 30px;
+  right: 110px;
+  font-size: 13px;
+  padding-top: 3px;
+}
+.stick {
+  width: 5px;
+  height: 30px;
+  background-color: black;
+  bottom: 10px;
+  right: 137px
 }

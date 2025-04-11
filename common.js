@@ -3,16 +3,8 @@ let space = document.querySelector('.space');
 let moveSpeed = 2; // 이동 속도
 let keys = {};
 let walls = document.querySelectorAll('.wall');
-let goDoorRight = false;
-let goDoorLeft = false;
-let goDoorUpDown = false;
-let goPage = 0;
 
-let translateX = 0; // X축 이동 거리
-let translateY = 0; // Y축 이동 거리
-const ctrlTranslateX = 5; // 컨트롤키와 함께 눌렀을 때 추가 이동 X
-const ctrlTranslateY = 5; // 컨트롤키와 함께 눌렀을 때 추가 이동 Y
-let isCtrlPressed = false; // 컨트롤키가 눌렸는지 여부
+let isShiftPressed = false; // 컨트롤키가 눌렸는지 여부
 let ArrowLeftPressed = false; // 좌우 중 어느 방향키 눌렀는지 여부
 
 let A_KeyPressed = false; // a키(스킬1)가 눌렸는지 여부
@@ -24,21 +16,12 @@ let Skill02UseTime = 0; // 마지막 스킬 사용 시간
 let skillCoolTime01 = 3000; // 쿨타임
 let skillCoolTime02 = 6000; 
 
-const monster = document.querySelector('.monster');
 const hitEffectImage = document.querySelector('.hitEffectImage');
 // 쿨타임 게이지 요소 가져오기
 const skillCoolTimeCircle01 = document.querySelector('.skill01-coolTime-circle');
 const skillCoolTimeCircle02 = document.querySelector('.skill02-coolTime-circle');
-// Skill02UseTime = Date.now() - skillCoolTime02;
 
 const monsters = [];
-let maxMonsters = 5; // 최대 몬스터 수
-
-let xVal = 0;
-let yVal = 0;
-let speed = 0.3; // 속도 변경
-let angle = Math.random() * 2 * Math.PI;
-let changeAngleProbability = 0.01; // 각도 변경 확률 (낮출수록 직선에 가깝게 움직임)
 
 document.addEventListener('keydown', (event) => {
     keys[event.key] = true;
@@ -61,15 +44,15 @@ function isColliding(player, monster) {
 
 // 컨트롤 키가 눌렸을 때
 document.addEventListener('keydown', (event) => {
-    if (event.key === 'Control') {
-        isCtrlPressed = true;
+    if (event.key === 'Shift') {
+        isShiftPressed = true;
     }
 });
 
 // 컨트롤 키가 떼어졌을 때
 document.addEventListener('keyup', (event) => {
-    if (event.key === 'Control') {
-        isCtrlPressed = false;
+    if (event.key === 'Shift') {
+        isShiftPressed = false;
     }
 });
 
@@ -85,7 +68,7 @@ document.addEventListener('keydown', (event) => {
 
 // 키 입력 이벤트 핸들러 수정
 document.addEventListener('keydown', (event) => {
-    if (event.key === 'a') {
+    if (event.key === 'a' || event.key === 'A') {
         const currentTime = Date.now(); // 현재 시간
         let timeSinceLastSkillUse = currentTime - Skill01UseTime; // 마지막 스킬 사용 후 경과 시간
         if (timeSinceLastSkillUse >= skillCoolTime01) {
@@ -120,13 +103,13 @@ document.addEventListener('keydown', (event) => {
     }
 });
 document.addEventListener('keyup', (event) => {
-    if (event.key === 'a') {
+    if (event.key === 'a' || event.key === 'A') {
         A_KeyPressed = false;
     } 
 });
 // 키 입력 이벤트 핸들러 수정
 document.addEventListener('keydown', (event) => {
-    if (event.key === 's') {
+    if (event.key === 's' || event.key === 'S') {
         const currentTime = Date.now();
         let timeSinceLastSkillUse = currentTime - Skill02UseTime;
 
@@ -140,7 +123,7 @@ document.addEventListener('keydown', (event) => {
 });
 
 document.addEventListener('keyup', (event) => {
-    if (event.key === 's') {
+    if (event.key === 's' || event.key === 'S') {
         S_KeyPressed = false;
     } 
 });
@@ -186,69 +169,15 @@ function skill02AnimationEnd() {
     }
 }
 
-// 몬스터 생성 함수
-function createMonster() {
-    if (monsters.length < maxMonsters) {
-        // 몬스터 컨테이너 생성
-        const monsterContainer = document.createElement('div');
-        monsterContainer.className = 'monster-container';
-        monsterContainer.style.position = 'absolute';
-
-        // 몬스터 이미지 생성
-        const monster = document.createElement('img');
-        monster.src = '../img/슬라임.gif';
-        monster.alt = '몬스터';
-        monster.className = 'monster';
-
-        // 체력바 생성
-        const healthBar = document.createElement('div');
-        healthBar.className = 'health-bar';
-        const healthBarInner = document.createElement('div');
-        healthBarInner.className = 'health-bar-inner';
-        healthBar.appendChild(healthBarInner);
-
-        // 초기 위치 설정
-        const xVal = Math.random() * (space.offsetWidth - 48);
-        const yVal = Math.random() * (space.offsetHeight - 48);
-        monsterContainer.style.left = xVal + 'px';
-        monsterContainer.style.top = yVal + 'px';
-
-        // 초기 속도, 각도 설정
-        const speed = 1 + Math.random() * 0.5;
-        const angle = Math.random() * 2 * Math.PI;
-        const changeAngleProbability = 0.01;
-
-        // 몬스터 데이터 객체 생성 (체력 정보 추가)
-        const monsterData = {
-            container: monsterContainer, // 몬스터 컨테이너
-            element: monster,
-            healthBarInner: healthBarInner, // 체력바 inner 엘리먼트
-            x: xVal,
-            y: yVal,
-            speed: speed,
-            angle: angle,
-            changeAngleProbability: changeAngleProbability,
-            health: 100, // 초기 체력
-            lastAttacked: 0, // 마지막 공격 시간 초기화
-        };
-
-        // 몬스터 컨테이너에 몬스터와 체력바 추가
-        monsterContainer.appendChild(healthBar);
-        monsterContainer.appendChild(monster);
-        space.appendChild(monsterContainer);
-        monsters.push(monsterData);
-    }
-}
-
 // 체력바 업데이트 함수
 function updateHealthBar(monsterData) {
-    const healthPercent = monsterData.health + '%';
-    monsterData.healthBarInner.style.width = healthPercent;
-
+    const healthPercent = (monsterData.health / monsterData.initialHealth) * 100;
+    const displayPercent = Math.max(0, healthPercent); // 0% 이하로 떨어지지 않도록 보정
+    monsterData.healthBarInner.style.width = displayPercent + '%';
     // 체력에 따라 체력바 색상 변경 (선택 사항)
-    if (monsterData.health > 50) {
+    if (displayPercent > 50) {
         monsterData.healthBarInner.style.backgroundColor = 'green';
-    } else if (monsterData.health > 20) {
+    } else if (displayPercent > 20) {
         monsterData.healthBarInner.style.backgroundColor = 'yellow';
     } else {
         monsterData.healthBarInner.style.backgroundColor = 'red';
@@ -307,7 +236,7 @@ function moveMonster(monsterData) {
 
 // 애니메이션 루프
 function attackAnimate() {
-    if (isCtrlPressed) {
+    if (isShiftPressed) {
         if(ArrowLeftPressed){
             walkImg.style.transform = `translate(-5px, -3px)`;
         }else {
@@ -322,7 +251,7 @@ function attackAnimate() {
                 const currentTime = Date.now();
                 if (currentTime - monster.lastAttacked >= 300) { // 공격시간
                     // 몬스터 체력 감소
-                    monster.health -= 20;
+                    monster.health -= 10;
                     updateHealthBar(monster);
 
                     // 마지막 공격 시간 업데이트
@@ -354,7 +283,6 @@ function attackAnimate() {
                     // 몬스터 체력 감소
                     monster.health -= 30; // 예시: 30 데미지
                     updateHealthBar(monster);
-
                     // 마지막 공격 시간 업데이트
                     monster.lastAttacked = currentTime;
 
@@ -377,7 +305,7 @@ function attackAnimate() {
 
             if (isColliding(skillImage02, monster) && !monster.skill02DamageApplied) {
                 // 충돌 감지 및 데미지 미적용 상태 확인
-                monster.health -= 30; // 데미지 적용
+                monster.health -= 60; // 데미지 적용
                 updateHealthBar(monster);
                 monster.skill02DamageApplied = true; // 데미지 적용 상태로 변경
 
@@ -451,26 +379,5 @@ function startCoolTime02() {
     animationFrameId02 = requestAnimationFrame(updateCoolTimeCircle);
 }
 
-function animate() {
-    // 모든 몬스터 움직이기
-    for (let i = 0; i < monsters.length; i++) {
-        moveMonster(monsters[i]);
-    }
-    requestAnimationFrame(animate);
-}
-
-// 초기 몬스터 생성 (최대 몬스터 수까지)
-for (let i = 0; i < maxMonsters; i++) {
-    createMonster();
-}
-
-// 몬스터 생성 인터벌 설정
-monsterCreationInterval = setInterval(() => {
-    if (monsters.length < maxMonsters) {
-        createMonster();
-    } 
-}, 3000); // 3초에 1마리씩
-
 // 에니메이션 시작
 attackAnimate();
-animate(); 

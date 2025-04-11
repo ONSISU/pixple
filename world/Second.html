@@ -3,19 +3,22 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Character1</title>
-    <link rel="stylesheet" type="text/css" href="../style.css" />
-    <link rel="stylesheet" type="text/css" href="css/secondRoom.css" />
+    <title>Pixple</title>
+    <link rel="stylesheet" type="text/css" href="../common.css" />
+    <link rel="stylesheet" type="text/css" href="css/second.css" />
   </head>
   <body>
     <div class="space">
       <img class="walkImg" src="../img/pix1.png" alt="사용자"/>
       <img class="hitEffectImage" src="../img/아얏.png">
-      <div class="door door01"></div>
+      <div class="doorLR door01"></div>
+      <div class="notice notice01">보스방</div>
+      <div class="stick"></div>
       <div class="street street01"></div>
       <div class="street street02"></div>
       <div class="street street03"></div>
       <div class="street street04"></div>
+      <div class="doorTB door02"></div>
       <!-- <div class="wall wall01"></div> -->
       <!-- <div class="wall wall02"></div> -->
       <div class="skill01-coolTime-container">
@@ -24,8 +27,14 @@
         </div>
         <div class="skill01-coolTime-circle"></div>
       </div>
+      <div class="skill02-coolTime-container">
+        <div class="skill02-image-container">
+          <img class="skill02-image" src="../img/스킬02.png" alt="스킬2">
+        </div>
+        <div class="skill02-coolTime-circle"></div>
+      </div>
     </div>
-    <script src="../script.js"></script>
-    <script src="js/secondRoom.js"></script>
+    <script src="../common.js"></script>
+    <script src="js/second.js"></script>
   </body> 
 </html>

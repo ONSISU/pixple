@@ -1,0 +1,45 @@
+.wall01 {
+  position: relative; 
+  width: 576px; 
+  height: 53px; 
+}
+.wall02 {
+  position: relative; 
+  top: 55px;
+  width: 64px; 
+  height: 432px; 
+}
+.wall03 {
+  position: relative; 
+  /* top: 234px; */
+  left: 129px;
+  width: 512px; 
+  height: 53px; 
+
+}
+.door01 {
+  border-bottom-left-radius: 40px;
+  border-bottom-right-radius: 40px;
+  top: 0;
+  right: 200px;
+}
+/*  
+    width - 64px씩
+    height - 53px씩
+ */
+.street01 {
+  width: 53px; 
+  height: 192px; 
+  top: 0px;
+  left: 378px;
+}
+.street02 {
+  width: 560px; 
+  height: 53px; 
+  left: 78px;
+}
+.street03 {
+  width: 64px; 
+  height: 293px; 
+  left: 200px;
+}

@@ -1,20 +1,27 @@
 const urlParams = new URLSearchParams(window.location.search);
 const value = urlParams.get('data');
-let goDoorLR = false;
-let goDoorUD = false;
+let goDoorLR1 = false;
+let goDoorUD1 = false;
+let goDoorLR3 = false;
+let goDoorUD3 = false;
 let goPage = 0;
-let maxMonsters = 1; // 최대 몬스터 수
+let maxMonsters = 5; // 최대 몬스터 수
 
 if (urlParams.get('name')) {
     const 캐릭명 = urlParams.get('name');
     walkImg.src = `../img/${캐릭명}`;
 }
-if(value == 21){
-    walkImg.style.top = '102px';
-    walkImg.style.left = '530px';
-}else {
-    walkImg.style.top = '53px';
+
+if(value == 12){
+    walkImg.style.position = 'absolute';
+    walkImg.style.top = '50px';
+    walkImg.style.left = '50px';
+}else if (value == 32){
+    walkImg.style.position = 'absolute';
+    walkImg.style.top = '448px';
+    walkImg.style.left = '284px';
 }
+
 
 function update() {
     const rect = space.getBoundingClientRect();
@@ -66,7 +73,7 @@ function update() {
             canMoveRight = false;
         }
     });
-    
+
     if (keys['ArrowUp'] && top > 0 && canMoveUp) {
         walkImg.style.top = `${Math.max(0, top - moveSpeed)}px`;
     }
@@ -79,22 +86,33 @@ function update() {
     if (keys['ArrowRight'] && left < rect.width - walkImg.offsetWidth && canMoveRight) {
         walkImg.style.left = `${Math.min(rect.width - walkImg.offsetWidth, left + moveSpeed)}px`;
     }
-
-    if( 90 <= imgRect.top && imgRect.top <= 110  || 144 <= imgRect.bottom && imgRect.bottom <= 164) {
-        goDoorUD = true;
-    } else {
-        goDoorUD = false;
+    if( 90 <= imgRect.top && imgRect.top <= 112) {
+        goDoorUD1 = true;
+    }else {
+        goDoorUD1 = false;
     }
-    if(imgRect.right >= 630) {
-        goDoorLR = true;
+    if(imgRect.left <= 5) {
+        goDoorLR1 = true;
     } else {
-        goDoorLR = false;
+        goDoorLR1 = false;
     }
-    if(goDoorUD && goDoorLR) {
-        goPage = 12;
-        setTimeout(() => {
-            window.location.href = `Second.html?data=${encodeURIComponent(goPage)}&name=${urlParams.get('name')}`;
-        }, 500);
+    if( 364 <= imgRect.left && imgRect.left <= 388){
+        goDoorLR3 = true;
+    }else {
+        goDoorLR3 = false;
+    }
+    if(imgRect.bottom >= 532) {
+        goDoorUD3 = true;
+    } else {
+        goDoorUD3 = false;
+    }
+    if(goDoorUD1 && goDoorLR1) {
+        goPage = 21;
+        window.location.href = `First.html?data=${encodeURIComponent(goPage)}&name=${urlParams.get('name')}`;
+    }
+    if(goDoorUD3 && goDoorLR3) {
+        goPage = 23;
+        window.location.href = `Third.html?data=${encodeURIComponent(goPage)}&name=${urlParams.get('name')}`;
     }
     requestAnimationFrame(update);
 }
@@ -173,6 +191,5 @@ monsterCreationInterval = setInterval(() => {
     } 
 }, 3000); // 3초에 1마리씩
 
-// // 애니메이션 시작
 animate();
 update();
