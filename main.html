@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+  </head>
+  <body>
+    <div class="main-container">
+      <div class="game-area">
+        <div class="chat-wrapper">
+          <div class="chat" id="chat"></div>
+          <input type="text" id="message" placeholder="Type a message" />
+          <button id="send">Send</button>
+        </div>
+
+        <iframe
+          id="gameFrame"
+          src="./login/home.html"
+          width="640"
+          height="540"
+        ></iframe>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  const local = "http://localhost:8085";
+  const prod_url = "http://tomhoon.duckdns.org:18085";
+
+  // ⭐️ URL변경 여기만 하면 전부 적용됨
+  sessionStorage.setItem("url", prod_url);
+
+  const MESSAGE = document.getElementById("message");
+  const CHATAREA = document.querySelector("#chat");
+
+  MESSAGE.addEventListener("keydown", (e) => {
+    if (e.key == "Enter") {
+      const val = e.target.value;
+
+      if (!val) return;
+
+      document.querySelector("#send").click();
+    }
+  });
+
+  window.addEventListener("message", (event) => {
+    const data = event.data;
+
+    const { 캐릭터아이디, type } = data;
+
+    if (type === "chat") {
+      // Send message to WebSocket server
+
+      let socket = new SockJS(`${sessionStorage.getItem("url")}/chat`); // Connect to the /ws WebSocket endpoint
+      let stompClient = Stomp.over(socket); // Use STOMP over the WebSocket connection
+
+      stompClient.connect({ userId: 캐릭터아이디 }, function (frame) {
+        // ✅ 연결1: 방연결
+        stompClient.subscribe(`/topic/room1`, function (message) {
+          CHATAREA.innerHTML += transferSocketData(message);
+          CHATAREA.scrollTo(0, CHATAREA.scrollHeight);
+        });
+
+        // ✅ 연결2: 유저 연결상태
+        stompClient.subscribe("/topic/status", (msg) => {
+          CHATAREA.innerHTML += transferSocketData(msg);
+          CHATAREA.scrollTo(0, CHATAREA.scrollHeight);
+        });
+
+        const chatMessage = {
+          sender: 캐릭터아이디,
+          roomName: "status",
+          content: `${캐릭터아이디}님이 입장하셨습니다.`,
+        };
+
+        stompClient.send("/app/send", {}, JSON.stringify(chatMessage));
+      });
+
+      // 함수: 메세지 전송
+      const sendMsg = () => {
+        const chatMessage = {
+          sender: 캐릭터아이디,
+          roomName: "room1",
+          content: MESSAGE.value,
+        };
+
+        stompClient.send("/app/send", {}, JSON.stringify(chatMessage));
+
+        MESSAGE.value = "";
+        CHATAREA.scrollTo(0, CHATAREA.scrollHeight);
+      };
+
+      document.getElementById("send").onclick = function () {
+        sendMsg();
+      };
+      // 함수: 메세지 파싱
+      const transferSocketData = (message) => {
+        const fixedStr = message.body.replace(/(\w+):(\w+)/g, '"$1":"$2"'); // Add quotes
+        const obj = JSON.parse(fixedStr);
+
+        if (obj.roomName == "status") {
+          return "<p>" + `${obj.message}` + "</p>";
+        }
+
+        return "<p>" + `${obj.sender}: ${obj.message}` + "</p>";
+      };
+    }
+  });
+</script>
+
+<style>
+  body {
+    opacity: 0.1;
+  }
+  .game-area {
+    position: relative;
+  }
+  .chat-wrapper {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+  }
+
+  .chat {
+    position: absolute;
+    background-color: #ccc;
+    opacity: 0.4;
+    right: 0;
+    bottom: 30px;
+  }
+  .main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  #gameFrame {
+    border: none;
+  }
+  .game-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+</style>

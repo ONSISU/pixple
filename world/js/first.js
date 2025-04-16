@@ -5,29 +5,39 @@ let goDoorUD = false;
 let goPage = 0;
 let maxMonsters = 1; // 최대 몬스터 수
 
+const 캐릭명 = {
+    'pix1.png': '곰돌이',
+    'pix2.png': '팬더',
+    'pix3.png': '호랑이'
+}[urlParams.get('name')]
+
 if (urlParams.get('name')) {
     const 캐릭명 = urlParams.get('name');
     walkImg.src = `../img/${캐릭명}`;
 }
-if(value == 21){
+if (value == 21) {
     walkImg.style.top = '102px';
     walkImg.style.left = '530px';
-}else {
+} else {
     walkImg.style.top = '53px';
+}
+
+function sendToParent(message) {
+    window.parent.postMessage(message, "*"); // "*" allows all origins, or replace with your domain
 }
 
 function update() {
     const rect = space.getBoundingClientRect();
     let top = walkImg.offsetTop;
     let left = walkImg.offsetLeft;
-    
+
     const imgRect = {
-    top: top,
-    left: left,
-    right: left + walkImg.offsetWidth,
-    bottom: top + walkImg.offsetHeight
+        top: top,
+        left: left,
+        right: left + walkImg.offsetWidth,
+        bottom: top + walkImg.offsetHeight
     };
-    
+
     let canMoveUp = true;
     let canMoveDown = true;
     let canMoveLeft = true;
@@ -42,31 +52,31 @@ function update() {
         };
 
         if (isColliding(
-            {top: top - moveSpeed, left: left, right: left + walkImg.offsetWidth, bottom: top + walkImg.offsetHeight - moveSpeed},
+            { top: top - moveSpeed, left: left, right: left + walkImg.offsetWidth, bottom: top + walkImg.offsetHeight - moveSpeed },
             wallRect
         )) {
             canMoveUp = false;
         }
         if (isColliding(
-            {top: top + moveSpeed, left: left, right: left + walkImg.offsetWidth, bottom: top + walkImg.offsetHeight + moveSpeed},
+            { top: top + moveSpeed, left: left, right: left + walkImg.offsetWidth, bottom: top + walkImg.offsetHeight + moveSpeed },
             wallRect
         )) {
             canMoveDown = false;
         }
         if (isColliding(
-            {top: top, left: left - moveSpeed, right: left + walkImg.offsetWidth - moveSpeed, bottom: top + walkImg.offsetHeight},
+            { top: top, left: left - moveSpeed, right: left + walkImg.offsetWidth - moveSpeed, bottom: top + walkImg.offsetHeight },
             wallRect
         )) {
             canMoveLeft = false;
         }
         if (isColliding(
-            {top: top, left: left + moveSpeed, right: left + walkImg.offsetWidth + moveSpeed, bottom: top + walkImg.offsetHeight},
+            { top: top, left: left + moveSpeed, right: left + walkImg.offsetWidth + moveSpeed, bottom: top + walkImg.offsetHeight },
             wallRect
         )) {
             canMoveRight = false;
         }
     });
-    
+
     if (keys['ArrowUp'] && top > 0 && canMoveUp) {
         walkImg.style.top = `${Math.max(0, top - moveSpeed)}px`;
     }
@@ -80,17 +90,17 @@ function update() {
         walkImg.style.left = `${Math.min(rect.width - walkImg.offsetWidth, left + moveSpeed)}px`;
     }
 
-    if( 90 <= imgRect.top && imgRect.top <= 110  || 144 <= imgRect.bottom && imgRect.bottom <= 164) {
+    if (90 <= imgRect.top && imgRect.top <= 110 || 144 <= imgRect.bottom && imgRect.bottom <= 164) {
         goDoorUD = true;
     } else {
         goDoorUD = false;
     }
-    if(imgRect.right >= 630) {
+    if (imgRect.right >= 630) {
         goDoorLR = true;
     } else {
         goDoorLR = false;
     }
-    if(goDoorUD && goDoorLR) {
+    if (goDoorUD && goDoorLR) {
         goPage = 12;
         setTimeout(() => {
             window.location.href = `Second.html?data=${encodeURIComponent(goPage)}&name=${urlParams.get('name')}`;
@@ -170,9 +180,11 @@ for (let i = 0; i < maxMonsters; i++) {
 monsterCreationInterval = setInterval(() => {
     if (monsters.length < maxMonsters) {
         createMonster();
-    } 
+    }
 }, 3000); // 3초에 1마리씩
 
 // // 애니메이션 시작
 animate();
 update();
+
+sendToParent({ type: "chat", text: "Enter First", roomName: 'room1', 캐릭터아이디: 캐릭명 });

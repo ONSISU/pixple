@@ -34,7 +34,6 @@ const getAllUserInfo = () => {
 }
 
 const goLogin = async () => {
-  const url = 'http://tomhoon.duckdns.org:18085/login';
   const param = getAllUserInfo();
 
   if (!param) {
@@ -42,7 +41,7 @@ const goLogin = async () => {
     return;
   }
 
-  const res = await fetch(url, {
+  const res = await fetch(`${sessionStorage.getItem("url")}/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json;charset=utf-8'

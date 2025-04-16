@@ -13,7 +13,7 @@ const getAllUserInfo = () => {
 }
 
 const submit = async () => {
-  const url = 'http://tomhoon.duckdns.org:18085/join';
+  const url = sessionStorage.getItem("url");
   const param = getAllUserInfo();
 
   if (!param) {
