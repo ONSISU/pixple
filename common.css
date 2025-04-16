@@ -1,0 +1,314 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body { 
+  margin: 0; 
+  padding: 0;
+  /* overflow: hidden;  */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+
+}
+.space {
+  position: relative;
+  overflow: hidden; 
+  width: 640px;
+  height: 540px;
+  background-image: url("../pixple/img/green-carpet-texture.jpg");
+  z-index: 100;
+}
+.walkImg {
+  width: 62px;
+  height: 52px;
+  position: absolute; /* 절대 위치 지정 */
+  z-index: 102;
+}
+.wall {
+}
+.doorLR {
+  width: 8px;
+  height: 60px;
+  background-color: burlywood;
+  /* overflow: hidden; */
+  position: absolute;
+  box-shadow: 0 0  7px  3px gray;
+  z-index: 101;
+}
+.doorTB {
+  width: 70px;
+  height: 8px;
+  background-color: burlywood;
+  /* overflow: hidden; */
+  position: absolute;
+  box-shadow: 0 0  7px  3px gray;
+  z-index: 101;
+}
+.monster {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  z-index: 101;
+}
+.street {
+  background-color: burlywood;
+  z-index: 100;
+  position: relative; 
+}
+.monster-container {
+  position: absolute; /* 몬스터와 체력바를 함께 움직이기 위해 */
+  z-index: 101;
+}
+
+.health-bar {
+  width: 48px;
+  height: 5px;
+  background-color: gray;
+  position: relative;
+  top: -8px;
+}
+
+.health-bar-inner {
+  width: 100%; /* 초기 체력은 100% */
+  height: 100%;
+  background-color: green;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.hitEffectImage {
+  position: absolute;
+  width: 50px; 
+  height: 50px; 
+  display: none;
+  z-index: 101;
+}
+.skill01-animation-right {
+  animation: skill01MoveRight 0.5s forwards; /* 0.5초 동안 skillMoveRight 애니메이션 실행 */
+}
+
+.skill01-animation-left {
+  animation: skill01MoveLeft 0.5s forwards; /* 0.5초 동안 skillMoveLeft 애니메이션 실행 */
+}
+
+@keyframes skill01MoveRight {
+  from {
+      transform: translateX(0); /* 시작 위치 (제자리) */
+  }
+  to {
+      transform: translateX(200px); /* 끝 위치 (오른쪽으로 100px 이동) */
+  }
+}
+
+@keyframes skill01MoveLeft {
+  from {
+      transform: translateX(0); /* 시작 위치 (제자리) */
+  }
+  to {
+      transform: translateX(-200px); /* 끝 위치 (왼쪽으로 100px 이동) */
+  }
+}
+.skill01-coolTime-container {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: 50px;
+  height: 50px;
+}
+
+.skill01-image-container {
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  z-index: 101;
+  top: 10%;
+  left: 10%;
+  background-color: rgb(71, 71, 226);
+}
+
+.skill01-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+  z-index: 101;
+  transform: rotate(-45deg);
+}
+
+.skill01-coolTime-circle {
+  position: absolute; 
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 100%;
+  background: conic-gradient(blue 100%, blue 0%, transparent 0%, transparent 100%); /* 초기 상태: 게이지 없음 */
+  mask: radial-gradient(closest-side, transparent 55%, black 56%); /* 가운데 구멍 뚫기 */
+  -webkit-mask: radial-gradient(closest-side, transparent 55%, black 56%); /* Safari */
+  z-index: 100;
+}
+.skill02-coolTime-container {
+  position: absolute;
+  bottom: 10px;
+  left: 70px;
+  width: 50px;
+  height: 50px;
+}
+
+.skill02-image-container {
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  z-index: 101;
+  top: 10%;
+  left: 10%;
+}
+
+.skill02-image {
+  width: 100%;
+  height: 100%;
+  /* object-fit: contain; */
+  border-radius: 50%;
+  z-index: 101;
+}
+
+.skill02-coolTime-circle {
+  position: absolute; 
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 100%;
+  background: conic-gradient(blue 100%, blue 0%, transparent 0%, transparent 100%); /* 초기 상태: 게이지 없음 */
+  mask: radial-gradient(closest-side, transparent 55%, black 56%); /* 가운데 구멍 뚫기 */
+  -webkit-mask: radial-gradient(closest-side, transparent 55%, black 56%); /* Safari */
+  z-index: 100;
+}
+.skill-effect {
+  animation: skill02Animation 0.5s ease-out;
+}
+/* 스킬 이펙트 애니메이션 */
+@keyframes skill02Animation {
+  from {
+    transform: scale(0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(2); /* 더 넓게 퍼지도록 조정 */
+    opacity: 0;
+  }
+}
+@keyframes skill03Animation {
+    0% {
+        transform: scale(1.5);
+        opacity: 0;
+      }
+    50% {
+      transform: scale(1.5);
+      opacity: 0.6;
+    }
+    100% {
+      transform: scale(1.5);
+      opacity: 0.1;
+    }
+}
+.skill03 {
+  animation: skill03Animation 1s ease-in-out forwards;
+}
+.notice {
+  position: absolute; 
+  border: 1px solid black;
+  background-color: white;
+  border-radius: 4px;
+  z-index: 101;
+  text-align: center;
+}
+.stick {
+  position: absolute; 
+}
+.skill01-content {
+  position: absolute;
+  width: 150px;
+  top: -100px; 
+  left: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  z-index: 102;
+  display: none;
+}
+.skill02-content {
+  position: absolute;
+  width: 150px;
+  top: -100px; 
+  left: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  z-index: 102;
+  display: none;
+}
+.skill03-content {
+  position: absolute;
+  width: 160px;
+  top: -100px; 
+  left: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  z-index: 102;
+  display: none;
+}
+.skill03-coolTime-container {
+  position: absolute;
+  bottom: 10px;
+  left: 130px;
+  width: 50px;
+  height: 50px;
+}
+
+.skill03-image-container {
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  z-index: 101;
+  top: 10%;
+  left: 10%;
+}
+
+.skill03-image {
+  width: 100%;
+  height: 100%;
+  /* object-fit: contain; */
+  border-radius: 50%;
+  z-index: 101;
+  background-color: black;
+} 
+
+.skill03-coolTime-circle {
+  position: absolute; 
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 100%;
+  background: conic-gradient(blue 100%, blue 0%, transparent 0%, transparent 100%); /* 초기 상태: 게이지 없음 */
+  mask: radial-gradient(closest-side, transparent 55%, black 56%); /* 가운데 구멍 뚫기 */
+  -webkit-mask: radial-gradient(closest-side, transparent 55%, black 56%); /* Safari */
+  z-index: 100;
+}

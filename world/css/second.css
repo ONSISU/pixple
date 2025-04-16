@@ -1,0 +1,65 @@
+.wall01 {
+  position: absolute; 
+  width: 200px; 
+  height: 80px; 
+  left: 300px;
+}
+.wall02 {
+  position: absolute; 
+  width: 500px; 
+  height: 300px; 
+  left: 50px;
+  bottom: 0;
+
+}
+.door01 {
+  border-top-right-radius: 40px;
+  border-bottom-right-radius: 40px;
+  float: left;
+  top: 100px;
+}
+.door02 {
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px;
+  bottom: 0;
+  right: 200px;
+}
+.street01 {
+  width: 384px; 
+  height: 53px; 
+  top: 83px;
+  left: 163px;
+}
+.street02 {
+  width: 64px; 
+  height: 318px; 
+  top: 30px;
+  left: 99px;
+}
+.street03 {
+  width: 64px; 
+  height: 318px; 
+  top: -235px;
+  left: 483px;
+}
+.street04 {
+  width: 384px; 
+  height: 53px; 
+  top: -288px;
+  left: 100px;
+}
+.notice01 {
+  width: 60px;
+  height: 30px;
+  bottom: 30px;
+  right: 110px;
+  font-size: 13px;
+  padding-top: 3px;
+}
+.stick {
+  width: 5px;
+  height: 30px;
+  background-color: black;
+  bottom: 10px;
+  right: 137px
+}
