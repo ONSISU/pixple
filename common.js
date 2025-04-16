@@ -4,18 +4,18 @@ let moveSpeed = 2; // 이동 속도
 let keys = {};
 let walls = document.querySelectorAll('.wall');
 
-let isShiftPressed = false; // 컨트롤키가 눌렸는지 여부
+let isShiftPressed = false; // 쉬프트트키가 눌렸는지 여부
 let ArrowLeftPressed = false; // 좌우 중 어느 방향키 눌렀는지 여부
 
 let A_KeyPressed = false; // a키(스킬1)가 눌렸는지 여부
 let S_KeyPressed = false; // s키(스킬2)가 눌렸는지 여부
 let D_KeyPressed = false; // d키(스킬3)가 눌렸는지 여부
-let skillImage01 = null; // 스킬 이미지 변수 초기화
-let skillImage02 = null; // 스킬 이미지 변수 초기화
-let skillImage03 = null; // 스킬 이미지 변수 초기화
+let skillImage01 = null; 
+let skillImage02 = null;
+let skillImage03 = null; 
 let Skill01UseTime = 0; // 마지막 스킬 사용 시간
-let Skill02UseTime = 0; // 마지막 스킬 사용 시간
-let Skill03UseTime = 0; // 마지막 스킬 사용 시간
+let Skill02UseTime = 0;
+let Skill03UseTime = 0;
 let skillCoolTime01 = 3000; // 쿨타임
 let skillCoolTime02 = 6000; 
 let skillCoolTime03 = 15000; 
@@ -53,14 +53,13 @@ function isColliding(player, monster) {
     );
 }
 
-// 컨트롤 키가 눌렸을 때
+// 쉬프트 키가 눌렸을 때
 document.addEventListener('keydown', (event) => {
     if (event.key === 'Shift') {
         isShiftPressed = true;
     }
 });
-
-// 컨트롤 키가 떼어졌을 때
+// 쉬프트 키가 떼어졌을 때
 document.addEventListener('keyup', (event) => {
     if (event.key === 'Shift') {
         isShiftPressed = false;
@@ -118,7 +117,7 @@ document.addEventListener('keyup', (event) => {
         A_KeyPressed = false;
     } 
 });
-// 키 입력 이벤트 핸들러 수정
+
 document.addEventListener('keydown', (event) => {
     if (event.key === 's' || event.key === 'S') {
         const currentTime = Date.now();
@@ -132,12 +131,12 @@ document.addEventListener('keydown', (event) => {
         }
     }
 });
-
 document.addEventListener('keyup', (event) => {
     if (event.key === 's' || event.key === 'S') {
         S_KeyPressed = false;
     } 
 });
+
 document.addEventListener('keydown', (event) => {
     if (event.key === 'd' || event.key === 'D') {
         const currentTime = Date.now();
@@ -156,6 +155,7 @@ document.addEventListener('keyup', (event) => {
         D_KeyPressed = false;
     } 
 });
+
 skill01Image.addEventListener('mouseover', () => {
     skill01Content.style.display = 'block';
 });
@@ -174,7 +174,8 @@ skill03Image.addEventListener('mouseover', () => {
 skill03Image.addEventListener('mouseout', () => {
     skill03Content.style.display = 'none';
 });
-function useSkill02() { // 스킬 사용 함수
+
+function useSkill02() {
     if (!skillImage02) { // 스킬 이미지가 없으면 생성
         skillImage02 = document.createElement('img');
         skillImage02.style.position = 'absolute';
@@ -285,7 +286,6 @@ function moveMonster(monsterData) {
         monsterData.x = space.offsetWidth - monster.width;
         monsterData.angle = Math.random() * 2 * Math.PI;
     }
-
     if (monsterData.y < 0) {
         monsterData.y = 0;
         monsterData.angle = Math.random() * 2 * Math.PI;
@@ -439,7 +439,6 @@ function attackAnimate() {
 // 쿨타임 시작 함수
 function startCoolTime01() {
     let startTime = Date.now();
-    let animationFrameId01;
 
     function updateCoolTimeCircle() {
         const elapsedTime = Date.now() - startTime;
@@ -457,7 +456,6 @@ function startCoolTime01() {
 }
 function startCoolTime02() {
     let startTime = Date.now();
-    let animationFrameId02;
 
     function updateCoolTimeCircle() {
         const elapsedTime = Date.now() - startTime;
@@ -476,7 +474,6 @@ function startCoolTime02() {
 }
 function startCoolTime03() {
     let startTime = Date.now();
-    let animationFrameId03;
 
     function updateCoolTimeCircle() {
         const elapsedTime = Date.now() - startTime;
