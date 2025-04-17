@@ -78,7 +78,7 @@ document.addEventListener('keydown', (event) => {
 
 // 키 입력 이벤트 핸들러 수정
 document.addEventListener('keydown', (event) => {
-    if (event.key === 'a' || event.key === 'A') {
+    if (event.key === 'a' || event.key === 'A' || event.key === 'ㅁ') {
         const currentTime = Date.now(); // 현재 시간
         let timeSinceLastSkillUse = currentTime - Skill01UseTime; // 마지막 스킬 사용 후 경과 시간
         if (timeSinceLastSkillUse >= skillCoolTime01) {
@@ -113,13 +113,13 @@ document.addEventListener('keydown', (event) => {
     }
 });
 document.addEventListener('keyup', (event) => {
-    if (event.key === 'a' || event.key === 'A') {
+    if (event.key === 'a' || event.key === 'A' || event.key === 'ㅁ') {
         A_KeyPressed = false;
     } 
 });
 
 document.addEventListener('keydown', (event) => {
-    if (event.key === 's' || event.key === 'S') {
+    if (event.key === 's' || event.key === 'S' || event.key === 'ㄴㄴ') {
         const currentTime = Date.now();
         let timeSinceLastSkillUse = currentTime - Skill02UseTime;
 
@@ -132,13 +132,13 @@ document.addEventListener('keydown', (event) => {
     }
 });
 document.addEventListener('keyup', (event) => {
-    if (event.key === 's' || event.key === 'S') {
+    if (event.key === 's' || event.key === 'S' || event.key === 'ㄴㄴ') {
         S_KeyPressed = false;
     } 
 });
 
 document.addEventListener('keydown', (event) => {
-    if (event.key === 'd' || event.key === 'D') {
+    if (event.key === 'd' || event.key === 'D' || event.key === 'ㅇㅇ') {
         const currentTime = Date.now();
         let timeSinceLastSkillUse = currentTime - Skill03UseTime;
 
@@ -151,7 +151,7 @@ document.addEventListener('keydown', (event) => {
     }
 });
 document.addEventListener('keyup', (event) => {
-    if (event.key === 'd' || event.key === 'D') {
+    if (event.key === 'd' || event.key === 'D' || event.key === 'ㅇ') {
         D_KeyPressed = false;
     } 
 });
@@ -490,6 +490,11 @@ function startCoolTime03() {
     }
     animationFrameId03 = requestAnimationFrame(updateCoolTimeCircle);
 }
-
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter' || event.keyCode === 13) { // 엔터 키 확인
+      event.preventDefault(); // 기본 동작 취소 (선택 사항)
+      window.parent.postMessage('focusMessage', '*'); // 부모 창으로 메시지 전송
+    }
+});
 // 에니메이션 시작
 attackAnimate();
