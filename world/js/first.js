@@ -19,6 +19,7 @@ if (value == 21) {
     walkImg.style.top = '102px';
     walkImg.style.left = '530px';
 } else {
+    sendToParent({ type: "chat", text: "Enter First", roomName: 'room1', 캐릭터아이디: 캐릭명 });
     walkImg.style.top = '53px';
 }
 
@@ -187,4 +188,3 @@ monsterCreationInterval = setInterval(() => {
 animate();
 update();
 
-sendToParent({ type: "chat", text: "Enter First", roomName: 'room1', 캐릭터아이디: 캐릭명 });
