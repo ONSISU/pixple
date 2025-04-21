@@ -27,7 +27,7 @@ function sendToParent(message) {
     window.parent.postMessage(message, "*"); // "*" allows all origins, or replace with your domain
 }
 
-function update() {
+function update(x, y) {
     const rect = space.getBoundingClientRect();
     let top = walkImg.offsetTop;
     let left = walkImg.offsetLeft;
@@ -91,6 +91,17 @@ function update() {
         walkImg.style.left = `${Math.min(rect.width - walkImg.offsetWidth, left + moveSpeed)}px`;
     }
 
+        // 좌표 업데이트
+        walkImg.dataset.x = walkImg.offsetLeft;  // 또는 left
+        walkImg.dataset.y = walkImg.offsetTop;   // 또는 top
+   
+       //  부모 창에 좌표 전송
+       window.parent.postMessage({
+           type: "characterPosition",
+           x: walkImg.offsetLeft, // 또는 left
+           y: walkImg.offsetTop  // 또는 top
+       }, "*");
+       
     if (90 <= imgRect.top && imgRect.top <= 110 || 144 <= imgRect.bottom && imgRect.bottom <= 164) {
         goDoorUD = true;
     } else {

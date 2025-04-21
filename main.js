@@ -9,7 +9,6 @@ const CHATAREA = document.querySelector("#chat");
 const SEND = document.querySelector("#send");
 const gameFrame = document.getElementById('gameFrame');
 const gameArea = document.querySelector('.game-area');
-
 MESSAGE.addEventListener("keydown", (e) => {
 if (e.key == "Enter") {
     const val = e.target.value;
@@ -22,18 +21,21 @@ if (e.key == "Enter") {
 
 window.addEventListener("message", (event) => {
 const data = event.data;
+const { 캐릭터아이디, type } = data;
 if (data.action === 'loginSuccess') {
     gameArea.style.display = 'block';
 }
-const { 캐릭터아이디, type } = data;
+if (event.data.type === "characterPosition") {
+    const x = event.data.x;
+    const y = event.data.y;
+    console.log("캐릭터 위치:", x, y);
+    // TODO:  좌표를 사용하여 다른 작업 수행 (예: 캐릭터 위치 업데이트)
+}
 if (type === "chat") {
     // Send message to WebSocket server
 
     let socket = new SockJS(`${sessionStorage.getItem("url")}/chat`); // Connect to the /ws WebSocket endpoint
     let stompClient = Stomp.over(socket); // Use STOMP over the WebSocket connection
-
-    // 사용자 목록
-    const userList = {};
 
     stompClient.connect({ userId: 캐릭터아이디 }, function (frame) {
     // ✅ 연결1: 방연결
@@ -86,7 +88,7 @@ if (type === "chat") {
         return "<p class='chatMessage'>" + `${obj.message}` + "</p>";
     }
 
-    return "<p class='chatMessage'>" + `${obj.sender}: ${obj.message}` + "</p>";
+    return "<p class='chatMessage'>" + `${obj.sender}: ${obj.message}` + "</p>"; 
     };
 }
 });
