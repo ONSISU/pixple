@@ -22,7 +22,12 @@ if (value == 21) {
     sendToParent({ type: "chat", text: "Enter First", roomName: 'room1', 캐릭터아이디: 캐릭명 });
     walkImg.style.top = '53px';
 }
-
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter' || event.keyCode === 13) { // 엔터 키 확인
+      event.preventDefault(); // 기본 동작 취소 (선택 사항)
+      window.parent.postMessage('focusMessage', '*'); // 부모 창으로 메시지 전송
+    }
+});
 function sendToParent(message) {
     window.parent.postMessage(message, "*"); // "*" allows all origins, or replace with your domain
 }
@@ -195,6 +200,26 @@ monsterCreationInterval = setInterval(() => {
     }
 }, 3000); // 3초에 1마리씩
 
+// window.addEventListener("message", (event) => {
+//     if (event.data.type === "addUser") {
+//       const userId = event.data.userId;
+//       // 사용자 이미지 생성 및 iframe에 추가
+//       const userImage = document.createElement("img");
+//       userImage.className = "walkImg";
+//       userImage.src = "../img/pix1.png";
+//       userImage.alt = "사용자";
+//       userImage.id = `user-${userId}`;
+
+//       const gameArea = document.getElementById("gameArea");
+//       if (gameArea) {
+//         gameArea.appendChild(userImage);
+//       } else {
+//         console.error("iframe 내부의 gameArea 요소를 찾을 수 없습니다.");
+//       }
+//     } else {
+//     console.error("iframe 내부의 gameArea 요소를 찾을 수 없습니다.");
+//     }
+// });
 // // 애니메이션 시작
 animate();
 update();
