@@ -12,7 +12,7 @@
     <input type="hidden" id="chat"/>
     <input type="hidden" id="send"/>
     <div class="space">
-      <img class="walkImg" id="walkImg"/>
+      <!-- <img class="walkImg" id="walkImg"/> -->
       <!-- <div id="gameArea"></div> -->
       <img class="hitEffectImage" src="../img/아얏.png"/>
       <div class="street street01"></div>
@@ -64,3 +64,67 @@
     <script src="js/first.js"></script>
   </body> 
 </html>
+<style>
+  .chat-wrapper {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 103; 
+  }
+  .chat-wrapper label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    margin-bottom: 5px;
+  }
+  .chat {
+    position: absolute;
+    background-color: #ccc;
+    opacity: 0.4;
+    right: 0;
+    bottom: 40px;
+    width: 640px;
+    height: 15vh;
+    overflow-y: scroll;
+    transition: height 0.3s ease;
+  }
+  .chatMessage {
+    padding: 2px 2px 2px 5px;
+    word-wrap: break-word;
+    width: 270px;
+  }
+  .main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  #gameFrame {
+    border: none;
+    z-index: 102;
+  }
+  .game-area {
+    position: relative;
+    width: 100%;
+    height: 20vh;
+    display: none;
+  }
+  .message {
+    width: 226px;
+    height: 100%;
+    padding: 0 8px;
+    border-radius: 4px;
+    border: 1px solid black;
+    margin-right: 5px;
+  }
+  .message:active, .message:focus {
+    outline: none;
+  }
+  .send {
+    width: 48px;
+    height: 100%;
+    border: 1px solid black;
+    border-radius: 4px;
+  }
+</style>

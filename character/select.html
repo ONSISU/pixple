@@ -45,9 +45,10 @@ const ARROW = document.querySelector('.arrow');
 document.addEventListener('keydown', (e) => {
 
   if (e.key == 'Enter') {
-    window.parent.postMessage({ action: 'loginSuccess' }, '*');
+    window.parent.postMessage({ action: 'loginSuccess', name : nameList[Math.abs(moveIndex % 3)] }, '*');
     
-    location.href = `../world/First.html?name=${nameList[Math.abs(moveIndex % 3)]}`;
+    // location.href = `../world/First.html?name=${nameList[Math.abs(moveIndex % 3)]}`;
+    location.href = `../world/First.html`;
     
     return;
   }

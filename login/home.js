@@ -40,7 +40,7 @@ const goLogin = async () => {
     alert("아이디 비밀번호 입력");
     return;
   }
-
+  
   const res = await fetch(`${sessionStorage.getItem("url")}/login`, {
     method: 'POST',
     headers: {
@@ -52,6 +52,7 @@ const goLogin = async () => {
   const data = await res.json();
 
   if (data?.resultCode == 100) {
+    localStorage.setItem('userId', param.userId);
     location.href = '../character/select.html';
   } else {
     alert(data?.result || '로그인 실패');
