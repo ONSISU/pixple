@@ -60,71 +60,34 @@
       </div>
     </div>
     <!-- <script src="../common.js"></script>   -->
-    <script src="../main.js"></script>
-    <script src="js/first.js"></script>
   </body> 
-</html>
-<style>
-  .chat-wrapper {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    z-index: 103; 
-  }
-  .chat-wrapper label {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 30px;
-    margin-bottom: 5px;
-  }
-  .chat {
-    position: absolute;
-    background-color: #ccc;
-    opacity: 0.4;
-    right: 0;
-    bottom: 40px;
-    width: 640px;
-    height: 15vh;
-    overflow-y: scroll;
-    transition: height 0.3s ease;
-  }
-  .chatMessage {
-    padding: 2px 2px 2px 5px;
-    word-wrap: break-word;
-    width: 270px;
-  }
-  .main-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
-  #gameFrame {
-    border: none;
-    z-index: 102;
-  }
-  .game-area {
-    position: relative;
-    width: 100%;
-    height: 20vh;
-    display: none;
-  }
-  .message {
-    width: 226px;
-    height: 100%;
-    padding: 0 8px;
-    border-radius: 4px;
-    border: 1px solid black;
-    margin-right: 5px;
-  }
-  .message:active, .message:focus {
-    outline: none;
-  }
-  .send {
-    width: 48px;
-    height: 100%;
-    border: 1px solid black;
-    border-radius: 4px;
-  }
-</style>
+  </html>
+  <script src="../main.js"></script>
+  <script src="js/first.js"></script>
+    <style>
+      .character {
+          position: absolute;
+          /*width: 50px;*/
+          /*height: 50px;*/
+          /*background-color: red;*/
+          /*border-radius: 50%;*/
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+      }
+      .character img {
+          width: 50px; /* 캐릭터 이미지 크기 */
+          height: 50px;
+      }
+      .name-tag {
+          background-color: rgba(255, 255, 255, 0.7);
+          padding: 2px 5px;
+          border-radius: 5px;
+          font-size: 12px;
+          margin-top: 5px;
+      }
+      .my-character {
+          /* outline: 2px solid blue; */
+      }
+  </style>

@@ -3,6 +3,7 @@ const prod_url = "http://tomhoon.duckdns.org:18085";
 
 // const urlParams = new URLSearchParams(window.location.search);
 // const value = urlParams.get('data');
+// const 캐릭명 = urlParams.get('name');
 
 // ⭐️ URL변경 여기만 하면 전부 적용됨
 sessionStorage.setItem("url", local);
@@ -16,13 +17,15 @@ const gameArea = document.querySelector('.game-area');
 // const space = document.querySelector(".space");
 
 let iframeWindow = null; // iframe의 window 객체 참조
-let 캐릭명2 = null; 
-
-let characterX = 0; // 자신의 캐릭터 초기 x 좌표
-let characterY = 0; // 자신의 캐릭터 초기 y 좌표
-let userCount = 0;
+let iframeId = generateUniqueId(); // 각 iframe에 고유 ID 부여 함수 (예시)
 let walkImg = document.querySelector('.walkImg');
 let userName = null;
+// 캐릭터 위치를 저장하는 객체 (캐릭터 ID -> {x, y})
+const characterPositions = {};
+// 연결된 클라이언트를 관리하는 객체 (iframeId -> stompClient)
+const connectedClients = {};
+// 캐릭터 ID와 iframe ID를 매핑하는 객체
+const characterIframeMap = {};
 // let space = document.querySelector('.space');
 // let moveSpeed = 2; // 이동 속도
 // let keys = {};
@@ -62,113 +65,43 @@ const skill03Content = document.querySelector('.skill03-content');
 // }
 
 
-gameFrame.onload = function() {
-    iframeWindow = gameFrame.contentWindow;
-    console.log("iframe 로드 완료, iframeWindow 객체 얻음");
+function initializeIframeCommunication() {
+    if (gameFrame && gameFrame.contentWindow) {
+        iframeWindow = gameFrame.contentWindow;
+        console.log("iframe 통신 준비 완료");
+    } else {
+        console.warn("iframe 요소 또는 contentWindow를 찾을 수 없음");
+    }
+}
 
-    // iframe 로드 완료 후 STOMP 연결 및 메시지 구독을 시작하는 것이 안전할 수 있습니다.
-    // 아니면 iframe에서 부모에게 'ready' 메시지를 보내면 그때 시작하도록 해도 좋습니다.
-    // 현재 예시에서는 iframe 로드 완료 후 STOMP 연결 및 구독 로직이 이미 실행되었다고 가정합니다.
+// 초기 로드 시 또는 select.html에서 First.html로 이동 후 실행
+gameFrame.onload = () => {
+    initializeIframeCommunication();
+    // 필요한 초기화 작업 수행
 };
-
 
 function generateUniqueId() {
     return Math.random().toString(36).substring(2, 15);
 }
 
-
-
 MESSAGE.addEventListener("keydown", (e) => {
     if (e.key == "Enter") {
         const val = e.target.value;
-
         if (!val) return;
-
         document.querySelector("#send").click();
     }
 });
-
+``
 window.addEventListener("message", (event) => {
     const data = event.data;
     const { type } = data;
     if (data.action === 'loginSuccess') {
+        userName = data.name; 
         gameArea.style.display = 'block';
-        캐릭명2 = data.name;
-        console.log('캐릭명2 - ' + 캐릭명2);
-        connect();
+        initializeIframeCommunication();
+        console.log("iframe (First.html) 로드됨");
+        connect(); // STOMP 연결
     }
-
-    // if (event.data.type === "characterPosition") {
-    //     const x = event.data.x;
-    //     const y = event.data.y;
-    //     // console.log("캐릭터 위치:", x, y);
-    //     // TODO:  좌표를 사용하여 다른 작업 수행 (예: 캐릭터 위치 업데이트)
-    // }
-//     if (type === "chat") {
-//         // Send message to WebSocket server
-//         let socket = new SockJS(`${sessionStorage.getItem("url")}/chat`); // Connect to the /ws WebSocket endpoint
-//         let stompClient = Stomp.over(socket); // Use STOMP over the WebSocket connection
-//         // if(userName === "pix1.png") {
-//         //     캐릭터아이디 = '곰돌이';
-//         // }else if(userName === 'pix2.png') {
-//         //     캐릭터아이디 = '팬더';
-//         // }else {
-//         //     캐릭터아이디 = '호랑이'
-//         // }
-
-//         stompClient.connect({ userId: UserIdVal }, function (frame) {
-//             // ✅ 연결1: 방연결
-//             stompClient.subscribe(`/topic/room1`, function (message) {
-//                 CHATAREA.innerHTML += transferSocketData(message);
-//                 CHATAREA.scrollTo(0, CHATAREA.scrollHeight);
-//             });
-//             // ✅ 연결2: 유저 연결상태
-//             stompClient.subscribe("/topic/status", (msg) => {
-//                 CHATAREA.innerHTML += transferSocketData(msg);
-//                 CHATAREA.scrollTo(0, CHATAREA.scrollHeight);
-//             });
-//             const chatMessage = {
-//                 sender: UserIdVal,
-//                 roomName: "status",
-//                 content: `${UserIdVal}님이 입장하셨습니다.`,
-//             };
-//             console.log('chatMessage - ' + chatMessage);
-//             stompClient.send("/app/send", {}, JSON.stringify(chatMessage));
-//         });
-        
-//         // 함수: 메세지 전송
-//         const sendMsg = () => {
-//             const chatMessage = {
-//                 sender: UserIdVal,
-//                 roomName: "room1",
-//                 content: MESSAGE.value,
-//             };
-
-//             stompClient.send("/app/send", {}, JSON.stringify(chatMessage));
-
-//             MESSAGE.value = "";
-//             CHATAREA.scrollTo(0, CHATAREA.scrollHeight);
-//         };
-
-//         document.getElementById("send").onclick = function () {
-//             if (MESSAGE.value === '') {
-//                 return false;
-//             }
-//             sendMsg();
-//         };
-//         // 함수: 메세지 파싱
-//         const transferSocketData = (message) => {
-//             const fixedStr = message.body.replace(/(\w+):(\w+)/g, '"$1":"$2"'); // Add quotes
-//             const obj = JSON.parse(fixedStr);
-
-//             if (obj.roomName == "status") {
-//                 return "<p class='chatMessage'>" + `${obj.message}` + "</p>";
-//             }
-
-//             return "<p class='chatMessage'>" + `${obj.sender}: ${obj.message}` + "</p>"; 
-//         };
-        
-//     }
 });
 
 function connect() {
@@ -177,216 +110,249 @@ function connect() {
 
     // STOMP 연결 시도
     stompClient.connect({}, function (frame) {
+        iframeWindow.postMessage({ type: 'setIframeId', iframeId: iframeId }, '*'); // iframe에 ID 전달
+
+        console.log('STOMP Connected: ' + frame);
+
+        connectedClients[iframeId] = stompClient; // 클라이언트 연결 저장
+
         // 연결 성공 콜백
-    console.log('STOMP Connected11: ' + frame);
-    stompClient.subscribe(`/topic/room1`, function (message) {
-            CHATAREA.innerHTML += transferSocketData(message);
+        console.log('STOMP Connected11: ' + frame);
+        stompClient.subscribe(`/topic/room1`, function (message) {
+                CHATAREA.innerHTML += transferSocketData(message);
+                CHATAREA.scrollTo(0, CHATAREA.scrollHeight);
+            });
+        // ✅ 연결2: 유저 연결상태
+        stompClient.subscribe("/topic/status", (msg) => {
+            CHATAREA.innerHTML += transferSocketData(msg);
             CHATAREA.scrollTo(0, CHATAREA.scrollHeight);
         });
-    // ✅ 연결2: 유저 연결상태
-    stompClient.subscribe("/topic/status", (msg) => {
-        CHATAREA.innerHTML += transferSocketData(msg);
-        CHATAREA.scrollTo(0, CHATAREA.scrollHeight);
-    });
 
-      // '내' 캐릭터 정보 수신 구독 (기존 코드에 postMessage 추가)
-    stompClient.subscribe('/user/queue/my-character', function(message) {
-        console.log("개인 큐 메시지 수신:", message);
-        const data = JSON.parse(message.body);
-        console.log("내 캐릭터 정보 수신:", data);
-        if (data.type === 'myCharacterCreated' && data.character) {
-            myCharacterId = data.character.id;
-
-            console.log("내 캐릭터 ID (STOMP Session ID):", myCharacterId);
-
-            // --- **이 부분이 join 성공 후 처리 로직입니다.** ---
-            console.log(`★★★ join 성공! 내 캐릭터 ID: ${myCharacterId} ★★★`);
-            // 예: 게임 시작 버튼 활성화, 게임 UI 표시, 다른 플레이어 목록 로딩 등
-            // 부모 창으로 'joinSuccessful' 메시지를 보낼 수도 있습니다.
-             if (window.parent) {
-                 window.parent.postMessage({ type: 'joinSuccessful', characterId: myCharacterId }, '*'); // 부모에게 알림
-             }
-            // iframe으로 '내 캐릭터 정보' 메시지 전달
-            if (iframeWindow) {
-                iframeWindow.postMessage(data, '*'); // 실제 운영 환경에서는 '*' 대신 iframe의 origin을 지정해야 합니다.
+        
+        // 새로운 캐릭터 접속 및 연결 해제 알림 수신 구독 (기존 코드에 postMessage 추가)
+        stompClient.subscribe('/topic/characters', function(message) {
+            const data = JSON.parse(message.body);
+            console.log('main.js: 받은 캐릭터 이벤트:', data);
+            if (data.character && data.character.id) { // data.character가 존재하고 id 속성이 있는지 확인
+                myCharacterId = data.character.id; // myCharacterCreated
+                console.log('main.js: 내 캐릭터 ID:', myCharacterId);
+                characterIframeMap[myCharacterId] = iframeId; 
             }
-        }
-    });
-
-      // join 성공 상태를 받을 개인 큐 구독
-  stompClient.subscribe('/queue/join-status', function(message) {
-    const data = JSON.parse(message.body);
-    console.log("join 상태 메시지 수신:", data);
-    if (data.type === 'joinSuccess') {
-        // 서버로부터 join 성공 메시지를 받았습니다!
-        console.log(`★★★ join 성공! ${data.message} 내 캐릭터 ID: ${data.characterId} ★★★`);
-        // 이 시점에서 내 캐릭터 ID를 저장하거나, 게임 UI를 활성화하는 등의 로직을 수행합니다.
-        myCharacterId = data.characterId; // 이 메시지에서도 내 캐릭터 ID를 받을 수 있습니다.
-
-         // 부모 창으로 'joinSuccessful' 메시지를 보낼 수도 있습니다.
-         if (window.parent) {
-             window.parent.postMessage({ type: 'joinSuccessful', characterId: myCharacterId }, '*'); // 부모에게 알림
-         }
-         // 또는 iframe 자신에게 joinSuccess 이벤트를 발생시켜 first.js 내부에서 처리
-         // window.dispatchEvent(new CustomEvent('joinSuccessful', { detail: data }));
-
-    } else if (data.type === 'joinFailed') { // 만약 서버에서 join 실패 메시지도 보낸다면
-        console.error(`★★★ join 실패: ${data.message} ★★★`);
-        // join 실패 처리 로직 (예: 오류 메시지 표시, 재시도 버튼 활성화 등)
-    }
-});
-
-    // 현재 접속 중인 모든 캐릭터 정보 수신 구독 (기존 코드에 postMessage 추가)
-    stompClient.subscribe('/user/queue/characters', function(message) {
-    const data = JSON.parse(message.body);
-    console.log("현재 캐릭터 목록 수신:", data);
-    if (data.type === 'currentCharacters' && data.characters) {
-        // iframe으로 '현재 캐릭터 목록' 메시지 전달
-        if (iframeWindow) {
-            iframeWindow.postMessage(data, '*'); // 실제 운영 환경에서는 '*' 대신 iframe의 origin을 지정해야 합니다.
-        }
-    }
-    });
-
-    // 새로운 캐릭터 접속 및 연결 해제 알림 수신 구독 (기존 코드에 postMessage 추가)
-    stompClient.subscribe('/topic/characters', function(message) {
-    const data = JSON.parse(message.body);
-    console.log("메시지 수신:", data);
-    if ((data.type === 'newCharacter' && data.character) || (data.type === 'characterDisconnected' && data.id)) {
-        // iframe으로 '새 캐릭터 접속' 또는 '캐릭터 연결 해제' 메시지 전달
-        if (iframeWindow) {
-            iframeWindow.postMessage(data, '*'); // 실제 운영 환경에서는 '*' 대신 iframe의 origin을 지정해야 합니다.
-        }
-    }
-    });
-
-    // 다른 캐릭터의 이동 정보 수신 구독 (기존 코드에 postMessage 추가)
-    stompClient.subscribe('/topic/character-moves', function(message) {
-        const data = JSON.parse(message.body);
-        console.log("메시지 수신:", data);
-        if (data.type === 'characterMoved' && data.id !== undefined && data.x !== undefined && data.y !== undefined) {
-            // iframe으로 '캐릭터 이동' 메시지 전달
-            if (iframeWindow) {
-                iframeWindow.postMessage(data, '*'); // 실제 운영 환경에서는 '*' 대신 iframe의 origin을 지정해야 합니다.
+            if (data.type === 'newCharacter' && data.character && data.character.id) {
+                if (iframeWindow) {
+                    console.log("main.js: newCharacter 메시지 전송 - data.character.name:", data.character ? data.character.name : null); // 추가
+                    iframeWindow.postMessage({ /* ... */ characterName: data.character ? data.character.name : null }, '*');
+                }
+            } else if (data.type === 'characterDisconnected' && data.characterId) {
+                console.log("main.js: characterDisconnected 조건 충족됨 . data:", data); // 조건 충족 여부 로깅
+                console.log("main.js: data.type:", data.type);
+                console.log("main.js: data.characterId:", data.characterId);
+                console.log("main.js: iframeWindow:", iframeWindow);
+                if (iframeWindow) {
+                    console.log("[DEBUG] first.js로 characterDisconnected 메시지 전송. data:", data); // 전체 데이터 로깅
+                    iframeWindow.postMessage(data, '*');
+                }
+                // 캐릭터가 접속 종료하면 위치 정보와 매핑 정보 삭제
+                // delete characterPositions[data.characterId];
+                // delete characterIframeMap[data.characterId];
             }
-        }
-    });
+        });
 
-    const chatMessage = {
-        sender: UserIdVal,
-        roomName: "status",
-        content: `${UserIdVal}님이 입장하셨습니다.`,
-    };
-    stompClient.send("/app/send", {}, JSON.stringify(chatMessage));
-    
-    // 함수: 메세지 전송
-    const sendMsg = () => {
+        // '내' 캐릭터 정보 수신 구독 (기존 코드에 postMessage 추가)
+        stompClient.subscribe('/topic/userCharacter', function(message) {
+            const data = JSON.parse(message.body);
+            // console.log("내 캐릭터 정보 수신:", data);
+            if (data.type === 'currentCharacter' && data.character) {
+                if (data.character.id && data.character.x !== undefined && data.character.y !== undefined) {
+                    myCharacterId = data.character.id;
+                    console.log('main.js: 내 캐릭터 ID 설정:', myCharacterId);
+                    // characterIframeMap[myCharacterId] = iframeId; 
+                    if (iframeWindow) {
+                        console.log("main.js: createCharacter 메시지 전송 - characterName:", userName);
+                        iframeWindow.postMessage({
+                            type: 'createCharacter',
+                            characterData: data.character,
+                            isMyCharacter: true, // 명시적으로 내 캐릭터임을 알림
+                            characterName: userName 
+                        }, '*');
+                        // characterPositions[data.character.id] = { x: data.character.x, y: data.character.y };
+                    }
+                } else {
+                    console.warn('main.js: currentCharacter 메시지에 필요한 데이터 누락:', data.character);
+                }
+            } else if (data.type === 'initialCharacters' && Array.isArray(data.characters)) {
+                console.log('main.js: 초기 캐릭터 목록 전송:', data.characters);
+                if (iframeWindow) {
+                    console.log("main.js: loadInitialCharacters 메시지 전송 - myCharacterName:", userName);
+                    iframeWindow.postMessage({
+                        type: 'loadInitialCharacters', 
+                        characters: data.characters, 
+                        myCharacterName: userName 
+                    }, '*');
+                }
+            }
+        });
+        //     if (data.type === 'currentCharacter' && data.character) {
+        //         myCharacterId = data.character.id; //myCharacterCreated
+
+        //         // console.log("내 캐릭터 ID (STOMP Session ID):", myCharacterId);
+
+        //         // --- **이 부분이 join 성공 후 처리 로직입니다.** ---
+        //         console.log(`★★★ join 성공! 내 캐릭터 ID: ${myCharacterId} ★★★`);
+        //         // 예: 게임 시작 버튼 활성화, 게임 UI 표시, 다른 플레이어 목록 로딩 등
+        //         // 부모 창으로 'joinSuccessful' 메시지를 보낼 수도 있습니다.
+        //         if (window.parent) {
+        //             window.parent.postMessage({ type: 'joinSuccessful', characterId: myCharacterId }, '*'); // 부모에게 알림
+        //         }
+        //         // iframe으로 '내 캐릭터 정보' 메시지 전달
+        //         // if (iframeWindow) {
+        //         //     iframeWindow.postMessage(data, '*'); // 실제 운영 환경에서는 '*' 대신 iframe의 origin을 지정해야 합니다.
+        //         // }
+        //         if (iframeWindow) {
+        //             iframeWindow.postMessage({ type: 'createCharacter', characterData: data.character, isMyCharacter: true }, '*'); // iframe에 캐릭터 생성 요청 메시지 전달
+        //         }
+        //     }
+        //     // 서버에서 현재 접속 중인 모든 캐릭터 정보를 받을 때 (초기 로딩 시)
+        //     if (data.type === 'initialCharacters' && Array.isArray(data.characters)) {
+        //         // 초기 캐릭터 목록을 받으면 iframe에 전달하여 모두 생성하도록 합니다.
+        //         if (iframeWindow) {
+        //             iframeWindow.postMessage({ type: 'loadInitialCharacters', characters: data.characters }, '*');
+        //         }
+        //     }
+        // });
+
+        // 현재 접속 중인 모든 캐릭터 정보 수신 구독 (기존 코드에 postMessage 추가)
+        stompClient.subscribe(`/topic/newCharacters`, function(message) {
+            const data = JSON.parse(message.body);
+            if (data.type === 'currentCharacters' && data.characters && gameFrame.contentWindow) {
+                gameFrame.contentWindow.postMessage(data, '*');
+            }
+        });
+
+        // 다른 캐릭터의 이동 정보 수신 구독 (기존 코드에 postMessage 추가)
+        stompClient.subscribe('/topic/character-moves', function(message) {
+            const data = JSON.parse(message.body);
+            if (data.type === 'characterMoved' && data.characterId !== undefined && data.x !== undefined && data.y !== undefined && gameFrame.contentWindow) {
+                gameFrame.contentWindow.postMessage(data, '*');
+                // characterPositions[data.characterId] = { x: data.x, y: data.y };
+                // broadcastCharacterPosition(data);
+                console.log('main.js: characterMoved 메시지 수신', data);
+                // gameFrame.contentWindow.postMessage(data, '*');
+            }
+        });
+
         const chatMessage = {
             sender: UserIdVal,
-            roomName: "room1",
-            content: MESSAGE.value,
+            roomName: "status",
+            content: `${UserIdVal}님이 입장하셨습니다.`,
         };
-        
-        console.log('chatMessage - ' + chatMessage);
         stompClient.send("/app/send", {}, JSON.stringify(chatMessage));
+        
+        // 함수: 메세지 전송
+        const sendMsg = () => {
+            const chatMessage = {
+                sender: UserIdVal,
+                roomName: "room1",
+                content: MESSAGE.value,
+            };
+            
+            console.log('chatMessage - ' + chatMessage);
+            stompClient.send("/app/send", {}, JSON.stringify(chatMessage));
 
-        MESSAGE.value = "";
-        CHATAREA.scrollTo(0, CHATAREA.scrollHeight);
-    };
+            MESSAGE.value = "";
+            CHATAREA.scrollTo(0, CHATAREA.scrollHeight);
+        };
 
-    document.getElementById("send").onclick = function () {
-        if (MESSAGE.value === '') {
-            return false;
-        }
-        sendMsg();
-    };
-    // 함수: 메세지 파싱
-    const transferSocketData = (message) => {
-        const fixedStr = message.body.replace(/(\w+):(\w+)/g, '"$1":"$2"'); // Add quotes
-        const obj = JSON.parse(fixedStr);
+        document.getElementById("send").onclick = function () {
+            if (MESSAGE.value === '') {
+                return false;
+            }
+            sendMsg();
+        };
+        // 함수: 메세지 파싱
+        const transferSocketData = (message) => {
+            const fixedStr = message.body.replace(/(\w+):(\w+)/g, '"$1":"$2"'); // Add quotes
+            const obj = JSON.parse(fixedStr);
 
-        if (obj.roomName == "status") {
-            return "<p class='chatMessage'>" + `${obj.message}` + "</p>";
-        }
+            if (obj.roomName == "status") {
+                return "<p class='chatMessage'>" + `${obj.message}` + "</p>";
+            }
 
-        return "<p class='chatMessage'>" + `${obj.sender}: ${obj.message}` + "</p>"; 
-    };
-
+            return "<p class='chatMessage'>" + `${obj.sender}: ${obj.message}` + "</p>"; 
+        };
     
-    // 서버 연결이 완료되면 게임 참여 메시지를 보냅니다.
-    stompClient.send("/app/join", {}, JSON.stringify({}));
-
+        // 서버 연결이 완료되면 게임 참여 메시지를 보냅니다.
+        stompClient.send("/app/join", {}, JSON.stringify({name: userName}));
+        console.log('/join 접속 완');
     }, function(error) {
-    console.error('서버 연결 실패:', error);
+        console.error('서버 연결 실패:', error);
     });
-
 
     // --- iframe으로부터 메시지 수신 처리 (예: 이동 요청) ---
     // iframe에서 window.parent.postMessage()로 보낸 메시지를 여기서 받습니다.
     window.addEventListener('message', function(event) {
-    // 보안: 메시지 출처(origin) 확인이 매우 중요합니다!
-    // if (event.origin !== 'http://localhost:8080') { // iframe의 실제 origin으로 변경해야 합니다.
-    //     console.warn("알 수 없는 출처로부터 메시지 수신:", event.origin);
-    //     return;
-    // }
-
-    const messageData = event.data; // iframe으로부터 받은 데이터
-    const throttledSendMoveMessage = _.throttle(sendMoveMessage, 1000);
-    if (messageData && messageData.type === 'moveRequest') {
-        // iframe에서 캐릭터 이동 요청이 왔을 때 처리
-        const moveRequest = messageData.payload; // 실제 이동 정보 (x, y)
-        
-        // 서버로 이동 메시지 전송 (STOMP)
-        throttledSendMoveMessage(moveRequest.x, moveRequest.y);
-        sendUserNameToIframe(캐릭명2);
-    }
-    // 다른 타입의 메시지 처리...
+        const messageData = event.data;
+        console.log("Received message:", messageData); // 로그 추가
+        const throttledSendMoveMessage = _.throttle(sendMoveMessage, 100);
+        if (messageData && messageData.type === 'moveRequest') {
+            const moveRequest = messageData.payload;
+            console.log('moveRequest---- ' + moveRequest.data);
+            throttledSendMoveMessage(moveRequest.x, moveRequest.y); // userName 제거
+        }
+        // if (messageData && messageData.type === 'moveRequest') {
+        //     const moveRequest = messageData.payload;
+        //     moveCharacter(moveRequest);
+        // }
     });
 
-        
-   
     // (클라이언트 -> 서버) 캐릭터 이동 메시지 보내는 함수 예시
-function sendMoveMessage(x, y) {
-    if (stompClient && stompClient.connected) {
-        const moveMessage = {
-            x: x,
-            y: y
-        };
-        // 서버의 @MessageMapping("/move") 메서드로 메시지를 보냅니다.
-        stompClient.send("/app/move", {}, JSON.stringify(moveMessage));
-        console.log(`이동 메시지 전송: (${x}, ${y})`);
-    } else {
-        console.warn("STOMP 클라이언트가 연결되지 않았습니다.");
+    function sendMoveMessage(x,y) {
+        if (stompClient && stompClient.connected) {
+            const moveMessage = {
+                    x: x,
+                    y: y,
+                    name: userName
+                };
+            stompClient.send("/app/move", {}, JSON.stringify(moveMessage)); // moveRequest 그대로 전송
+            console.log(`이동 메시지 전송: (${x}, ${y})`);
+        } else {
+            console.warn("STOMP 클라이언트가 연결되지 않았습니다.");
+        }
+    }
+
+    // 캐릭터 이동 처리 함수
+    function moveCharacter(moveRequest) {
+            console.log('moveRequest---- ' + moveRequest);
+        // throttledSendMoveMessage(moveRequest.x, moveRequest.y); // userName 제거
+        if (stompClient && stompClient.connected) {
+            const moveMessage = {
+                    x: moveRequest.x,
+                    y: moveRequest.y,
+                    name: userName
+                    // name: moveRequest.characterId
+                    };
+            stompClient.send("/app/move", {}, JSON.stringify(moveMessage)); // moveRequest 그대로 전송
+            console.log(`이동 메시지 전송: (${moveRequest.x}, ${moveRequest.y})`);
+        } else {
+            console.warn("STOMP 클라이언트가 연결되지 않았습니다.");
+        }
     }
 }
 
-// 서버 연결 해제 함수
-function disconnect() {
-    if (stompClient) {
-        stompClient.disconnect();
-        console.log("STOMP 연결 해제됨");
-    }
-}
+    // const { characterId, x, y } = moveRequest;
+    // // 캐릭터 위치 업데이트
+    // characterPositions[characterId] = { x: x, y: y };
 
-
-
-
-}
-
-function sendUserNameToIframe(userName) {
-    if (iframeWindow) {
-        const messageToSend = {
-            type: 'userName', // iframe이 이 메시지가 '이름' 정보임을 알 수 있도록 타입 지정
-            name: userName    // 전달할 실제 이름 값
-        };
-        // iframeWindow.postMessage(메시지, 대상 Origin);
-        // 실제 운영 환경에서는 '*' 대신 iframe의 실제 Origin (first.html의 origin)을 지정해야 합니다.
-        iframeWindow.postMessage(messageToSend, '*');
-    } else {
-        console.error("iframeWindow가 null이어서 이름을 전달할 수 없습니다.");
-    }
-}
-
+    // // 이동 정보 브로드캐스트
+    // broadcastCharacterPosition({ type: 'characterMoved', characterId: characterId, x: x, y: y });
+// 캐릭터 위치 정보를 모든 클라이언트에게 전송
+// function broadcastCharacterPosition(data) {
+//     for (const id in connectedClients) {
+//         if (connectedClients.hasOwnProperty(id)) {
+//             connectedClients[id].send(JSON.stringify(data));
+//         }
+//     }
+// }
 function sendToParent(message) {
     gameFrame.contentWindow.postMessage(message, "*");
 }

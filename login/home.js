@@ -1,3 +1,4 @@
+
 const clickParticle = (e) => {
   for (let i = 0; i < 10; i++) {
     const particle = document.createElement('div');
