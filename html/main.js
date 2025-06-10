@@ -1,8 +1,8 @@
-const local = "http://localhost:8085";
-const prod_url = "http://tomhoon.duckdns.org:18085";
+const local = "http://localhost:18080";
+const prod_url = "http://tomhoon.duckdns.org:18080";
 
 // ⭐️ URL변경 여기만 하면 전부 적용됨
-sessionStorage.setItem("url", local);
+sessionStorage.setItem("url", prod_url);
 const UserIdVal = localStorage.getItem('userId');
 
 const MESSAGE = document.getElementById("message");
