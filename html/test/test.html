@@ -21,7 +21,7 @@
   const makebtn = document.querySelector('#makebtn');
   const peopleArea = document.querySelector('#people-area');
 
-  const socket = new SockJS('http://localhost:8085/chat');
+  const socket = new SockJS('http://tomhoon.duckdns.org:18080/chat');
   const stompClient = Stomp.over(socket);
 
   document.addEventListener('DOMContentLoaded', () => {
