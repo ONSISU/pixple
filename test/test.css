@@ -1,0 +1,12 @@
+#people-area {
+  margin: 10px;
+  width: 800px;
+  height: 800px;
+}
+
+.person {
+  width: 10px;
+  height: 10px;
+  background-color: black;
+  border-radius: 50%;
+}

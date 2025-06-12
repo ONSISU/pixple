@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./test.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="test">t</button>
+
+    <div id="people-area"></div>
+  </body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script src="./test.js"></script>
+
+<script>
+  const test = document.querySelector('#test');
+  const makebtn = document.querySelector('#makebtn');
+  const peopleArea = document.querySelector('#people-area');
+
+  const socket = new SockJS('http://localhost:8085/chat');
+  const stompClient = Stomp.over(socket);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    키보드움직임이벤트추가();
+
+    접속시연결();
+
+    setTimeout(() => {
+      최초접속시회원정보보내기();
+    }, 1500);
+
+    메세지이벤트추가();
+  });
+</script>
